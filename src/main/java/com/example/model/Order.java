@@ -1,18 +1,14 @@
 package com.example.model;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "Order")
+
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private int id;
 
-    @Column(name = "Client_ID")
+
     private int clientId;
 
-    @Column(name = "Menu_ID")
     private boolean menuId;
 
     private int amount;

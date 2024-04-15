@@ -1,15 +1,9 @@
 package com.example.model;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "Clients")
 public class Client {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private int id;
 
-    @Column(name = "Name")
     private String name;
 
     public Client(){}

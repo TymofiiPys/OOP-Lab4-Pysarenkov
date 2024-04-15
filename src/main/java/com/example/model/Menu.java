@@ -2,20 +2,15 @@ package com.example.model;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "Menu")
+
 public class Menu {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private int id;
 
-    @Column(name = "Name")
     private String name;
 
-    @Column(name = "Meal/Drink")
     private boolean meal_drink;
 
-    @Column(name = "Cost")
     private double cost;
 
     public Menu(){}
