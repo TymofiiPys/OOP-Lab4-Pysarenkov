@@ -1,7 +1,5 @@
 package com.example.model;
 
-import jakarta.persistence.*;
-
 
 public class Menu {
 
@@ -9,16 +7,16 @@ public class Menu {
 
     private String name;
 
-    private boolean meal_drink;
+    private boolean mealOrDrink;
 
     private double cost;
 
     public Menu(){}
 
-    public Menu(int id, String name, boolean meal_drink, double cost) {
+    public Menu(int id, String name, boolean mealOrDrink, double cost) {
         this.id = id;
         this.name = name;
-        this.meal_drink = meal_drink;
+        this.mealOrDrink = mealOrDrink;
         this.cost = cost;
     }
 
@@ -38,12 +36,12 @@ public class Menu {
         this.name = name;
     }
 
-    public boolean isMeal_drink() {
-        return meal_drink;
+    public boolean isMealOrDrink() {
+        return mealOrDrink;
     }
 
-    public void setMeal_drink(boolean meal_drink) {
-        this.meal_drink = meal_drink;
+    public void setMealOrDrink(boolean mealOrDrink) {
+        this.mealOrDrink = mealOrDrink;
     }
 
     public double getCost() {

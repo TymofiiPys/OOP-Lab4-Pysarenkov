@@ -9,7 +9,7 @@ public class Order {
 
     private int clientId;
 
-    private boolean menuId;
+    private int menuId;
 
     private int amount;
 
@@ -36,11 +36,11 @@ public class Order {
         this.clientId = clientId;
     }
 
-    public boolean isMenuId() {
+    public int getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(boolean menuId) {
+    public void setMenuId(int menuId) {
         this.menuId = menuId;
     }
 
