@@ -14,7 +14,20 @@ public class MenuDAO {
     public MenuDAO(Connection connection) {
         this.connection = connection;
     }
-    public List<Menu> getAllMenus() {
+
+    public void createMenu(Menu menu) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO menu (name, meal_drink, cost) VALUES (?, ?, ?)");
+            statement.setString(1, menu.getName());
+            statement.setBoolean(2, menu.isMealOrDrink());
+            statement.setDouble(3, menu.getCost());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Menu> readMenu() {
         List<Menu> menus = new ArrayList<>();
         try {
             String sql = "SELECT * FROM menu";
@@ -32,6 +45,29 @@ public class MenuDAO {
             e.printStackTrace();
         }
         return menus;
+    }
+
+    public void updateMenu(Menu menu) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE menu SET name = ?, meal = ?, cost = ? WHERE id = ?");
+            statement.setString(1, menu.getName());
+            statement.setBoolean(2, menu.isMealOrDrink());
+            statement.setDouble(3, menu.getCost());
+            statement.setInt(4, menu.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteMenu(int menuId) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM menu WHERE id = ?");
+            statement.setInt(1, menuId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
 

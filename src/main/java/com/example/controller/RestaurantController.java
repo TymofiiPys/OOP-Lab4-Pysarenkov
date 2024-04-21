@@ -69,7 +69,7 @@ public class RestaurantController extends HttpServlet {
     }
 
     private void listMenus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Menu> menus = menuDAO.getAllMenus();
+        List<Menu> menus = menuDAO.readMenu();
         request.setAttribute("menus", menus);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/menu.jsp");
         dispatcher.forward(request, response);
