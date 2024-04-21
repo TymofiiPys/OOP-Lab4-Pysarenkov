@@ -19,11 +19,11 @@ public class ClientDAO {
         List<Client> clients = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM \"Clients\"");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
             while (resultSet.next()) {
                 Client client = new Client();
-                client.setId(resultSet.getInt("ID"));
-                client.setName(resultSet.getString("Name"));
+                client.setId(resultSet.getInt("id"));
+                client.setName(resultSet.getString("name"));
                 clients.add(client);
             }
         } catch (SQLException e) {

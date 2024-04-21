@@ -17,15 +17,15 @@ public class MenuDAO {
     public List<Menu> getAllMenus() {
         List<Menu> menus = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM \"Menu\"";
+            String sql = "SELECT * FROM menu";
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Menu menu = new Menu();
-                menu.setId(resultSet.getInt("ID"));
-                menu.setName(resultSet.getString("Name"));
-                menu.setMealOrDrink(resultSet.getBoolean("Meal/Drink"));
-                menu.setCost(resultSet.getDouble("Cost"));
+                menu.setId(resultSet.getInt("id"));
+                menu.setName(resultSet.getString("name"));
+                menu.setMealOrDrink(resultSet.getBoolean("meal_drink"));
+                menu.setCost(resultSet.getDouble("cost"));
                 menus.add(menu);
             }
         } catch (SQLException e) {
