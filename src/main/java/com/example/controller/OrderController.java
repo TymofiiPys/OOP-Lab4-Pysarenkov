@@ -13,11 +13,11 @@ public class OrderController {
 
     }
 
-    public List<Order> getAllOrders() {
-        return new OrderDAO().findAll();
-    }
+//    public List<Order> getAllOrders() {
+//       return new OrderDAO().findAll();
+//    }
 
-    public void issueOrder(Client client) {
-        List<Order> unpaidOrder = new OrderDAO().getClientsUnpaidOrder(client);
-    }
+//    public void issueOrder(Client client) {
+//        List<Order> unpaidOrder = new OrderDAO().getClientsUnpaidOrder(client);
+//    }
 }
