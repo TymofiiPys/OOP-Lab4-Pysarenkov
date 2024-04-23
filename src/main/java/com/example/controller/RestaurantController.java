@@ -9,6 +9,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.sql.Connection;
@@ -16,13 +18,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name="RestaurantServlet", value = "/")
+@WebServlet(name = "RestaurantServlet", value = "/")
 public class RestaurantController extends HttpServlet {
 
     private MenuDAO menuDAO;
     private OrderDAO orderDAO;
-
     private Connection conn;
+    private Logger log = LogManager.getRootLogger();
+//    private Logger log = LogManager.getLogger(RestaurantController.class);
+
 
     @Override
     public void init() throws ServletException {
@@ -41,6 +45,8 @@ public class RestaurantController extends HttpServlet {
         }
         menuDAO = new MenuDAO(conn);
         orderDAO = new OrderDAO(conn);
+        log.trace("Configuration File Defined To Be :: "+System.getProperty("log4j.configurationFile"));
+
     }
 
     @Override
@@ -55,14 +61,12 @@ public class RestaurantController extends HttpServlet {
                 listUnpaidOrders(request, response);
                 break;
             default:
-                        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<h1>" + "message" + "</h1>");
-        out.println("</body></html>");
+                response.setContentType("text/html");
+                PrintWriter out = response.getWriter();
+                out.println("<html><body>");
+                out.println("<h1>" + "message" + "</h1>");
+                out.println("</body></html>");
         }
-
-
     }
 
     @Override
@@ -92,6 +96,8 @@ public class RestaurantController extends HttpServlet {
 
         response.setContentType("application/json");
         out.write(jsonArray.toString());
+
+        log.info("Parsed menu from DB");
     }
 
     private void listUnpaidOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
