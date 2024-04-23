@@ -5,13 +5,18 @@ import com.example.dao.OrderDAO;
 import com.example.model.Menu;
 import com.example.model.Order;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+@WebServlet(name="RestaurantServlet", value = "/")
 public class RestaurantController extends HttpServlet {
 
     private MenuDAO menuDAO;
@@ -43,8 +48,8 @@ public class RestaurantController extends HttpServlet {
         String action = request.getServletPath();
 
         switch (action) {
-            case "/listMenus":
-                listMenus(request, response);
+            case "/menu":
+                getMenu(request, response);
                 break;
             case "/listUnpaidOrders":
                 listUnpaidOrders(request, response);
@@ -56,6 +61,8 @@ public class RestaurantController extends HttpServlet {
         out.println("<h1>" + "message" + "</h1>");
         out.println("</body></html>");
         }
+
+
     }
 
     @Override
@@ -68,11 +75,23 @@ public class RestaurantController extends HttpServlet {
         }
     }
 
-    private void listMenus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Menu> menus = menuDAO.readMenu();
-        request.setAttribute("menus", menus);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/menu.jsp");
-        dispatcher.forward(request, response);
+    private void getMenu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Menu> menu = menuDAO.readMenu();
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        JSONArray jsonArray = new JSONArray();
+
+        for (Menu menuItem : menu) {
+            JSONObject jsonMenuItem = new JSONObject();
+            jsonMenuItem.put("id", menuItem.getId());
+            jsonMenuItem.put("name", menuItem.getName());
+            jsonMenuItem.put("meal", menuItem.isMealOrDrink());
+            jsonMenuItem.put("cost", menuItem.getCost());
+            jsonArray.put(jsonMenuItem);
+        }
+
+        response.setContentType("application/json");
+        out.write(jsonArray.toString());
     }
 
     private void listUnpaidOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
