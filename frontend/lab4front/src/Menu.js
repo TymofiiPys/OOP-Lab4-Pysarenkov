@@ -1,8 +1,31 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from "axios";
 
-function Menu(props) {
+function Menu() {
 
     const [order, setOrder] = useState({"client" : 1});
+    const [menuItems, setMenuItems] = useState([]);
+
+    useEffect(() => {
+        // Fetch menu items from backend servlet API
+        axios.get('/api/menu')
+            .then(response => {
+                setMenuItems(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching menu items:', error);
+            });
+    }, []);
+
+    const handleSubmitOrder = (orderData) => {
+        axios.post('/api/orders', orderData)
+            .then(response => {
+                console.log('Order placed successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+            });
+    }
 
     const handleAmountChange = (itemId, amount) => {
         setOrder(prevOrder => ({
@@ -14,7 +37,7 @@ function Menu(props) {
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        props.onSubmit(order);
+        handleSubmitOrder(order);
     }
 
     // return (<table>
@@ -50,7 +73,7 @@ function Menu(props) {
                 </tr>
                 </thead>
                 <tbody>
-                {props.passedMenuItems.map(item => (
+                {menuItems.map(item => (
                     <tr key={item.id}>
                         <td>{item.name}</td>
                         <td>{item.meal ? 'Meal' : 'Drink'}</td>

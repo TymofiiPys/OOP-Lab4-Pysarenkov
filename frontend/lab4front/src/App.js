@@ -1,38 +1,26 @@
+import React from "react";
 import './App.css';
 import Menu from "./Menu";
-import axios from 'axios';
-import React, {useEffect, useState} from "react";
+import Orders from "./Orders";
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
 
 function App() {
-    const [menuItems, setMenuItems] = useState([]);
-
-    const handleSubmitOrder = (orderData) => {
-        axios.post('/api/orders', orderData)
-          .then(response => {
-            console.log('Order placed successfully:', response.data);
-          })
-          .catch(error => {
-            console.error('Error placing order:', error);
-          });
-    }
-
-    useEffect(() => {
-        // Fetch menu items from backend servlet API
-        axios.get('/api/menu')
-            .then(response => {
-                setMenuItems(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching menu items:', error);
-            });
-    }, []);
-
     return (
-    <div>
-        <h1>Restaurant System</h1>
-        <Menu passedMenuItems={menuItems} onSubmit={handleSubmitOrder}/>
-    </div>
+        <Router basename={process.env.PUBLIC_URL}>
+            <div>
+                <h1>Restaurant System</h1>
+            </div>
+            {/*<Routes>*/}
+            {/*    <Route exact path="/menu" render={() => (*/}
+            {/*        <Menu/>*/}
+            {/*    )}/>*/}
+            {/*    <Route exact path='/admin' render={() => (*/}
+            {/*        <Orders/>*/}
+            {/*    )}/>*/}
+            {/*</Routes>*/}
+            <Menu/>
+        </Router>
     );
 }
 
