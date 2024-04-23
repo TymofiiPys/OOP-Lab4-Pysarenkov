@@ -73,4 +73,22 @@ public class OrderDAO {
             e.printStackTrace();
         }
     }
+
+    public void createOrder(List<Order> orders) throws SQLException {
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
+            for (Order order : orders) {
+                statement.setInt(1, order.getClientId());
+                statement.setInt(2, order.getMenuId());
+                statement.setInt(3, order.getAmount());
+                statement.setObject(4, order.getStatus().name().toLowerCase(), java.sql.Types.OTHER);
+                statement.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

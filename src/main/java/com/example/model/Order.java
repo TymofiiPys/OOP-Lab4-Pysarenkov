@@ -20,6 +20,13 @@ public class Order {
     public Order() {
     }
 
+    public Order(int clientId, int menuId, int amount, StatusOrder status) {
+        this.clientId = clientId;
+        this.menuId = menuId;
+        this.amount = amount;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
