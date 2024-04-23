@@ -7,6 +7,15 @@ import React, {useEffect, useState} from "react";
 function App() {
     const [menuItems, setMenuItems] = useState([]);
 
+    const handleSubmitOrder = (orderData) => {
+        // axios.post('/api/orders', orderData)
+        //   .then(response => {
+        //     console.log('Order placed successfully:', response.data);
+        //   })
+        //   .catch(error => {
+        //     console.error('Error placing order:', error);
+        //   });
+    }
 
     useEffect(() => {
         // Fetch menu items from backend servlet API
@@ -22,7 +31,7 @@ function App() {
     return (
     <div>
         <h1>Restaurant System</h1>
-        <Menu passedMenuItems={menuItems}/>
+        <Menu passedMenuItems={menuItems} onSubmit={handleSubmitOrder}/>
     </div>
     );
 }
