@@ -41,6 +41,20 @@ public class ClientDAO {
         return clients;
     }
 
+    public String getClientName(int id){
+        String name = "";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + id);
+            while (resultSet.next()) {
+                name = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
     public void updateClient(Client client) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE clients SET name = ? WHERE id = ?");

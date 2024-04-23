@@ -47,6 +47,20 @@ public class MenuDAO {
         return menus;
     }
 
+    public String getMenuItemtName(int id){
+        String name = "";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT menu.name FROM menu WHERE menu.id = " + id);
+            while (resultSet.next()) {
+                name = resultSet.getString("name");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
     public void updateMenu(Menu menu) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE menu SET name = ?, meal = ?, cost = ? WHERE id = ?");

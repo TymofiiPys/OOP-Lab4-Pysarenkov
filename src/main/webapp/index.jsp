@@ -8,6 +8,7 @@
 <h1><%= "Restaurant API requests:" %>
 </h1>
 <br/>
-<a href="/lab4/menu">/menu</a>
+<p><a href="/lab4/menu">/menu</a></p>
+<p><a href="/lab4/orders">/orders</a></p>
 </body>
 </html>

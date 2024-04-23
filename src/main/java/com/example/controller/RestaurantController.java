@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.dao.ClientDAO;
 import com.example.dao.MenuDAO;
 import com.example.dao.OrderDAO;
 import com.example.model.Menu;
@@ -27,6 +28,7 @@ public class RestaurantController extends HttpServlet {
 
     private MenuDAO menuDAO;
     private OrderDAO orderDAO;
+    private ClientDAO clientDAO;
     private Connection conn;
     private Logger log = LogManager.getRootLogger();
 //    private Logger log = LogManager.getLogger(RestaurantController.class);
@@ -49,6 +51,7 @@ public class RestaurantController extends HttpServlet {
         }
         menuDAO = new MenuDAO(conn);
         orderDAO = new OrderDAO(conn);
+        clientDAO = new ClientDAO(conn);
         log.trace("Configuration File Defined To Be :: " + System.getProperty("log4j.configurationFile"));
 
     }
@@ -60,6 +63,9 @@ public class RestaurantController extends HttpServlet {
         switch (action) {
             case "/menu":
                 getMenu(request, response);
+                break;
+            case "/orders":
+                getOrders(request, response);
                 break;
             case "/listUnpaidOrders":
                 listUnpaidOrders(request, response);
@@ -115,6 +121,28 @@ public class RestaurantController extends HttpServlet {
         out.write(jsonArray.toString());
 
         log.info("Parsed menu from DB");
+    }
+
+    private void getOrders(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Order> orders = orderDAO.readOrders(false);
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        JSONArray jsonArray = new JSONArray();
+
+        for (Order order : orders) {
+            JSONObject jsonMenuItem = new JSONObject();
+            jsonMenuItem.put("id", order.getId());
+            jsonMenuItem.put("client_id", clientDAO.getClientName(order.getClientId()));
+            jsonMenuItem.put("menu_id", menuDAO.getMenuItemtName(order.getMenuId()));
+            jsonMenuItem.put("amount", order.getAmount());
+            jsonMenuItem.put("status", order.getStatus().toString());
+            jsonArray.put(jsonMenuItem);
+        }
+
+        response.setContentType("application/json");
+        out.write(jsonArray.toString());
+
+        log.info("Parsed orders from DB");
     }
 
     private void listUnpaidOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

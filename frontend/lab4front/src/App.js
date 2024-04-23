@@ -11,15 +11,11 @@ function App() {
             <div>
                 <h1>Restaurant System</h1>
             </div>
-            {/*<Routes>*/}
-            {/*    <Route exact path="/menu" render={() => (*/}
-            {/*        <Menu/>*/}
-            {/*    )}/>*/}
-            {/*    <Route exact path='/admin' render={() => (*/}
-            {/*        <Orders/>*/}
-            {/*    )}/>*/}
-            {/*</Routes>*/}
-            <Menu/>
+            <Routes>
+                <Route exact path="/" element={<Menu/>}/>
+                <Route exact path='/admin' element={<Orders/>}/>
+            </Routes>
+            {/*<Menu/>*/}
         </Router>
     );
 }
