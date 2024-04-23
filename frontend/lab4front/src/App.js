@@ -8,13 +8,13 @@ function App() {
     const [menuItems, setMenuItems] = useState([]);
 
     const handleSubmitOrder = (orderData) => {
-        // axios.post('/api/orders', orderData)
-        //   .then(response => {
-        //     console.log('Order placed successfully:', response.data);
-        //   })
-        //   .catch(error => {
-        //     console.error('Error placing order:', error);
-        //   });
+        axios.post('/api/orders', orderData)
+          .then(response => {
+            console.log('Order placed successfully:', response.data);
+          })
+          .catch(error => {
+            console.error('Error placing order:', error);
+          });
     }
 
     useEffect(() => {

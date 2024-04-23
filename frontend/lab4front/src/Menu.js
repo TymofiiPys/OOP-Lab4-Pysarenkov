@@ -37,7 +37,6 @@ function Menu(props) {
     //     ))}
     //     </tbody>
     // </table>);
-    console.log("%j", props.passedMenuItems);
     return (<div>
         <h2>Order Form</h2>
         <form onSubmit={handleSubmit}>
@@ -51,7 +50,6 @@ function Menu(props) {
                 </tr>
                 </thead>
                 <tbody>
-                {/* Render table rows for each menu item */}
                 {props.passedMenuItems.map(item => (
                     <tr key={item.id}>
                         <td>{item.name}</td>
