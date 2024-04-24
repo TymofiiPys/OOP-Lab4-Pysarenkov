@@ -1,5 +1,6 @@
 package com.example.dao;
 
+import com.example.model.Menu;
 import com.example.model.Order;
 
 import java.sql.*;
@@ -40,7 +41,7 @@ public class OrderDAO {
         List<Order> orders = new ArrayList<>();
         try {
             String sql = "SELECT * FROM orders ";
-            if(readUnpaid) {
+            if (readUnpaid) {
                 sql += "WHERE status = ordered";
             }
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -52,7 +53,8 @@ public class OrderDAO {
                 order.setClientId(resultSet.getInt("client_id"));
                 order.setMenuId(resultSet.getInt("menu_id"));
                 order.setAmount(resultSet.getInt("amount"));
-                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));;
+                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
+                ;
                 orders.add(order);
             }
         } catch (SQLException e) {
@@ -75,7 +77,8 @@ public class OrderDAO {
                 order.setClientId(resultSet.getInt("client_id"));
                 order.setMenuId(resultSet.getInt("menu_id"));
                 order.setAmount(resultSet.getInt("amount"));
-                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));;
+                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
+                ;
                 orders.add(order);
             }
         } catch (SQLException e) {
@@ -101,13 +104,36 @@ public class OrderDAO {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
             for (Order order : orders) {
-                if(order.getAmount() < 1 ){
+                if (order.getAmount() < 1) {
                     continue;
                 }
                 statement.setInt(1, order.getClientId());
                 statement.setInt(2, order.getMenuId());
                 statement.setInt(3, order.getAmount());
                 statement.setObject(4, order.getStatus().name().toLowerCase(), java.sql.Types.OTHER);
+                statement.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) throws SQLException {
+        if (status == null) {
+            return;
+        }
+//        PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");
+//        statement.setObject(1, status.name().toLowerCase(), Types.OTHER);
+//        statement.setInt(2, id);
+//        statement.executeUpdate();
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");
+            for (int id : ids) {
+                statement.setObject(1, status.name().toLowerCase(), Types.OTHER);
+                statement.setInt(2, id);
                 statement.executeUpdate();
             }
             connection.commit();

@@ -48,6 +48,21 @@ function Menu() {
         handleSubmitOrder(order);
     }
 
+    const handlePayment = () => {
+        axios.put('/api/orders', unpaidOrders)
+            .then(response => {
+                console.log('Order updated successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+            });
+    }
+
+    const totalUnpaidCost = unpaidOrders.reduce((total, order) => {
+        const menuItem = menuItems.find(item => item.id === order.menu_id);
+        return total + menuItem.cost * order.amount;
+    }, 0);
+
     // return (<table>
     //     <thead>
     //     <tr>
@@ -119,6 +134,8 @@ function Menu() {
                     ))}
                     </tbody>
                 </table>
+                <h1>Total: ${totalUnpaidCost.toFixed(2)}</h1>
+                <button onClick={handlePayment}>Pay</button>
             </div>
         </form>
     </div>);

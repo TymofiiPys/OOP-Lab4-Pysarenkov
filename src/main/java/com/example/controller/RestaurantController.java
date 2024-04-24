@@ -65,7 +65,7 @@ public class RestaurantController extends HttpServlet {
                 getMenu(request, response);
                 break;
             case "/orders":
-                if(request.getParameter("which") == null)
+                if (request.getParameter("which") == null)
                     getOrders(request, response);
                 else
                     getUnpaidOrders(request, response, Integer.parseInt(request.getParameter("clid")));
@@ -89,6 +89,19 @@ public class RestaurantController extends HttpServlet {
         switch (action) {
             case "/orders":
                 createOrder(request, response);
+                break;
+            default:
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getServletPath();
+
+        switch (action) {
+            case "/orders":
+                updateOrderStatus(request, response);
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -156,12 +169,13 @@ public class RestaurantController extends HttpServlet {
 
         for (Order order : orders) {
             JSONObject jsonMenuItem = new JSONObject();
-//            jsonMenuItem.put("id", order.getId());
+            jsonMenuItem.put("id", order.getId());
 //            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
             Menu item = menuDAO.getMenuItem(order.getMenuId());
             jsonMenuItem.put("menu_item", item.getName());
+            jsonMenuItem.put("menu_id", order.getMenuId());
             jsonMenuItem.put("amount", order.getAmount());
-//            jsonMenuItem.put("status", order.getStatus().toString());
+            jsonMenuItem.put("status", order.getStatus().toString());
             jsonMenuItem.put("cost", item.getCost());
             jsonArray.put(jsonMenuItem);
         }
@@ -217,6 +231,40 @@ public class RestaurantController extends HttpServlet {
 
         jsonResponse.put("message", "Order submitted successfully");
         log.info("DB insertion successful");
+        response.getWriter().write(jsonResponse.toString());
+    }
+
+    private void updateOrderStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        JSONArray jsonArray = new JSONArray(request.getReader().lines().collect(Collectors.joining()));
+
+        log.info("Received request for order status update \n " + jsonArray.toString());
+
+        List<Integer> orderIds = new ArrayList<>();
+        Order.StatusOrder statusOrder = null;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject order = jsonArray.getJSONObject(i);
+            int orderId = order.getInt("id");
+            if(statusOrder == null) {
+                statusOrder = order.get("status").equals("ORDERED") ?
+                        Order.StatusOrder.ISSUED_FOR_PAYMENT :
+                        Order.StatusOrder.PAID;
+            }
+            orderIds.add(orderId);
+        }
+
+        response.setContentType("application/json");
+        JSONObject jsonResponse = new JSONObject();
+        try {
+            orderDAO.updateOrderStatus(orderIds, statusOrder);
+        } catch (SQLException e) {
+            jsonResponse.put("message", "Database error");
+            response.getWriter().write(jsonResponse.toString());
+            log.error("DB error");
+            return;
+        }
+
+        jsonResponse.put("message", "Order status updated successfully");
+        log.info("DB update successful");
         response.getWriter().write(jsonResponse.toString());
     }
 }
