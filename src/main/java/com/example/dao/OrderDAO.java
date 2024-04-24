@@ -69,7 +69,7 @@ public class OrderDAO {
             String sql = "SELECT * FROM orders WHERE orders.client_id = ? AND orders.status = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            statement.setObject(2, "ordered", java.sql.Types.OTHER);
+            statement.setObject(2, "issued_for_payment", java.sql.Types.OTHER);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Order order = new Order();
