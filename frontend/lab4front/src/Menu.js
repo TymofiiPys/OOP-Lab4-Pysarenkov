@@ -48,7 +48,10 @@ function Menu() {
         handleSubmitOrder(order);
     }
 
+    {/* Called when client pays for orders */
+    }
     const handlePayment = () => {
+        // Change order status to paid
         axios.put('/api/orders', unpaidOrders)
             .then(response => {
                 console.log('Order updated successfully:', response.data);
@@ -56,6 +59,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error placing order:', error);
             });
+        // Create payment
         axios.post('/api/payment', unpaidOrders)
             .then(response => {
                 console.log('Payment created successfully:', response.data);
@@ -128,7 +132,7 @@ function Menu() {
                     <tr>
                         <th>Menu Item</th>
                         <th>Amount</th>
-                        <th>Cost</th>
+                        <th>Cost Per One Item</th>
                     </tr>
                     </thead>
                     <tbody>

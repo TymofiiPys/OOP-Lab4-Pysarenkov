@@ -19,7 +19,6 @@ public class PaymentDAO {
 
         PreparedStatement statement = connection.prepareStatement("INSERT INTO payment (client_id, time, cost) VALUES (?, ?, ?)");
         statement.setInt(1, payment.getClientId());
-//            statement.setObject(2, payment.getTime(), Types.TIMESTAMP);
         statement.setTimestamp(2, payment.getTime());
         statement.setBigDecimal(3, BigDecimal.valueOf(payment.getCost()));
         statement.executeUpdate();

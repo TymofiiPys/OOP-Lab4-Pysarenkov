@@ -139,6 +139,47 @@ public class RestaurantController extends HttpServlet {
         log.info("Parsed menu from DB");
     }
 
+    private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Parse JSON request body to extract order data
+        JSONObject jsonBody = new JSONObject(request.getReader().lines().collect(Collectors.joining()));
+
+        log.info("Order received: \n " + jsonBody.toString());
+
+        Iterator<String> keys = jsonBody.keys();
+        int clientId = -1;
+        HashMap<Integer, Integer> menuItemAmounts = new HashMap<>();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (key.equals("client")) {
+                clientId = jsonBody.getInt(key);
+            } else {
+                int menuId = Integer.parseInt(key);
+                int amt = jsonBody.getInt(key);
+                menuItemAmounts.put(menuId, amt);
+            }
+        }
+
+        List<Order> orders = new ArrayList<>();
+        for (Integer key : menuItemAmounts.keySet()) {
+            orders.add(new Order(clientId, key, menuItemAmounts.get(key), Order.StatusOrder.ORDERED));
+        }
+
+        response.setContentType("application/json");
+        JSONObject jsonResponse = new JSONObject();
+        try {
+            orderDAO.createOrder(orders);
+        } catch (SQLException e) {
+            jsonResponse.put("message", "Database error");
+            response.getWriter().write(jsonResponse.toString());
+            log.error("DB error");
+            return;
+        }
+
+        jsonResponse.put("message", "Order submitted successfully");
+        log.info("DB insertion successful");
+        response.getWriter().write(jsonResponse.toString());
+    }
+
     private void getOrders(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Order> orders = orderDAO.readOrders(false);
         response.setContentType("application/json");
@@ -188,47 +229,6 @@ public class RestaurantController extends HttpServlet {
         out.write(jsonArray.toString());
 
         log.info("Parsed orders from DB");
-    }
-
-    private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Parse JSON request body to extract order data
-        JSONObject jsonBody = new JSONObject(request.getReader().lines().collect(Collectors.joining()));
-
-        log.info("Order received: \n " + jsonBody.toString());
-
-        Iterator<String> keys = jsonBody.keys();
-        int clientId = -1;
-        HashMap<Integer, Integer> menuItemAmounts = new HashMap<>();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            if (key.equals("client")) {
-                clientId = jsonBody.getInt(key);
-            } else {
-                int menuId = Integer.parseInt(key);
-                int amt = jsonBody.getInt(key);
-                menuItemAmounts.put(menuId, amt);
-            }
-        }
-
-        List<Order> orders = new ArrayList<>();
-        for (Integer key : menuItemAmounts.keySet()) {
-            orders.add(new Order(clientId, key, menuItemAmounts.get(key), Order.StatusOrder.ORDERED));
-        }
-
-        response.setContentType("application/json");
-        JSONObject jsonResponse = new JSONObject();
-        try {
-            orderDAO.createOrder(orders);
-        } catch (SQLException e) {
-            jsonResponse.put("message", "Database error");
-            response.getWriter().write(jsonResponse.toString());
-            log.error("DB error");
-            return;
-        }
-
-        jsonResponse.put("message", "Order submitted successfully");
-        log.info("DB insertion successful");
-        response.getWriter().write(jsonResponse.toString());
     }
 
     private void updateOrderStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
