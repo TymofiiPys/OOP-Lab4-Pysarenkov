@@ -30,9 +30,7 @@ public class RestaurantController extends HttpServlet {
     private OrderDAO orderDAO;
     private ClientDAO clientDAO;
     private Connection conn;
-    private Logger log = LogManager.getRootLogger();
-//    private Logger log = LogManager.getLogger(RestaurantController.class);
-
+    private final Logger log = LogManager.getRootLogger();
 
     @Override
     public void init() throws ServletException {
@@ -67,11 +65,8 @@ public class RestaurantController extends HttpServlet {
             case "/orders":
                 if (request.getParameter("which") == null)
                     getOrders(request, response);
-                else
+                else if (request.getParameter("which").equals("issued"))
                     getUnpaidOrders(request, response, Integer.parseInt(request.getParameter("clid")));
-                break;
-            case "/listUnpaidOrders":
-                listUnpaidOrders(request, response);
                 break;
             default:
                 response.setContentType("text/html");
@@ -147,11 +142,13 @@ public class RestaurantController extends HttpServlet {
 
         for (Order order : orders) {
             JSONObject jsonMenuItem = new JSONObject();
+            Menu item = menuDAO.getMenuItem(order.getMenuId());
             jsonMenuItem.put("id", order.getId());
             jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
-            jsonMenuItem.put("menu_item", menuDAO.getMenuItem(order.getMenuId()).getName());
+            jsonMenuItem.put("menu_item", item.getName());
             jsonMenuItem.put("amount", order.getAmount());
             jsonMenuItem.put("status", order.getStatus().toString());
+            jsonMenuItem.put("cost", item.getCost());
             jsonArray.put(jsonMenuItem);
         }
 
@@ -184,13 +181,6 @@ public class RestaurantController extends HttpServlet {
         out.write(jsonArray.toString());
 
         log.info("Parsed orders from DB");
-    }
-
-    private void listUnpaidOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Order> unpaidOrders = orderDAO.getUnpaidOrders();
-        request.setAttribute("unpaidOrders", unpaidOrders);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/unpaidOrders.jsp");
-        dispatcher.forward(request, response);
     }
 
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
