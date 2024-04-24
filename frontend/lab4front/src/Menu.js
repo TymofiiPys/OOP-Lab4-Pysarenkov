@@ -16,7 +16,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error fetching menu items:', error);
             });
-        axios.get('/api/orders?which=unpaid&clid=' + 1)
+        axios.get('/api/orders?which=issued&clid=' + 1)
             .then(response => {
                 setUnpaidOrders(response.data);
             })
@@ -52,6 +52,13 @@ function Menu() {
         axios.put('/api/orders', unpaidOrders)
             .then(response => {
                 console.log('Order updated successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+            });
+        axios.post('api/payment', unpaidOrders)
+            .then(response => {
+                console.log('Payment created successfully:', response.data);
             })
             .catch(error => {
                 console.error('Error placing order:', error);
