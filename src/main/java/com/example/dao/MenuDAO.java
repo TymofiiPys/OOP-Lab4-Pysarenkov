@@ -47,18 +47,35 @@ public class MenuDAO {
         return menus;
     }
 
-    public String getMenuItemtName(int id){
-        String name = "";
+//    public String getMenuItemName(int id){
+//        String name = "";
+//        try {
+//            Statement statement = connection.createStatement();
+//            ResultSet resultSet = statement.executeQuery("SELECT menu.name FROM menu WHERE menu.id = " + id);
+//            while (resultSet.next()) {
+//                name = resultSet.getString("name");
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return name;
+//    }
+
+    public Menu getMenuItem(int id) {
+        Menu item = new Menu();
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT menu.name FROM menu WHERE menu.id = " + id);
-            while (resultSet.next()) {
-                name = resultSet.getString("name");
-            }
+            String sql = "SELECT * FROM menu WHERE menu.id = " + id;
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            item.setId(resultSet.getInt("id"));
+            item.setName(resultSet.getString("name"));
+            item.setMealOrDrink(resultSet.getBoolean("meal_drink"));
+            item.setCost(resultSet.getDouble("cost"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return name;
+        return item;
     }
 
     public void updateMenu(Menu menu) {

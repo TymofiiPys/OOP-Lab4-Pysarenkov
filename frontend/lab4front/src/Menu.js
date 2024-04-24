@@ -3,8 +3,9 @@ import axios from "axios";
 
 function Menu() {
 
-    const [order, setOrder] = useState({"client" : 1});
+    const [order, setOrder] = useState({"client": 1});
     const [menuItems, setMenuItems] = useState([]);
+    const [unpaidOrders, setUnpaidOrders] = useState([]);
 
     useEffect(() => {
         // Fetch menu items from backend servlet API
@@ -14,6 +15,13 @@ function Menu() {
             })
             .catch(error => {
                 console.error('Error fetching menu items:', error);
+            });
+        axios.get('/api/orders?which=unpaid&clid=' + 1)
+            .then(response => {
+                setUnpaidOrders(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching unpaid orders:', error);
             });
     }, []);
 
@@ -91,6 +99,27 @@ function Menu() {
                 </tbody>
             </table>
             <button type="submit">Place Order</button>
+            <div>
+                <h2>Unpaid Orders</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Menu Item</th>
+                        <th>Amount</th>
+                        <th>Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {unpaidOrders.map(order => (
+                        <tr key={order.id}>
+                            <td>{order.menu_item}</td>
+                            <td>{order.amount}</td>
+                            <td>${order.cost.toFixed(2)}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </form>
     </div>);
 }

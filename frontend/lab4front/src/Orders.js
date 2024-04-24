@@ -22,8 +22,8 @@ function Orders() {
             <thead>
             <tr>
                 <th>Order ID</th>
-                <th>Client ID</th>
-                <th>Menu ID</th>
+                <th>Client Name</th>
+                <th>Menu Item</th>
                 <th>Amount</th>
                 <th>Status</th>
             </tr>
@@ -32,8 +32,8 @@ function Orders() {
             {orders.map(order => (
                 <tr key={order.id}>
                     <td>{order.id}</td>
-                    <td>{order.client_id}</td>
-                    <td>{order.menu_id}</td>
+                    <td>{order.client_name}</td>
+                    <td>{order.menu_item}</td>
                     <td>{order.amount}</td>
                     <td>{order.status}</td>
                 </tr>

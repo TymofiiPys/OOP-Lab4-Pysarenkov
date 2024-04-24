@@ -65,7 +65,10 @@ public class RestaurantController extends HttpServlet {
                 getMenu(request, response);
                 break;
             case "/orders":
-                getOrders(request, response);
+                if(request.getParameter("which") == null)
+                    getOrders(request, response);
+                else
+                    getUnpaidOrders(request, response, Integer.parseInt(request.getParameter("clid")));
                 break;
             case "/listUnpaidOrders":
                 listUnpaidOrders(request, response);
@@ -132,10 +135,34 @@ public class RestaurantController extends HttpServlet {
         for (Order order : orders) {
             JSONObject jsonMenuItem = new JSONObject();
             jsonMenuItem.put("id", order.getId());
-            jsonMenuItem.put("client_id", clientDAO.getClientName(order.getClientId()));
-            jsonMenuItem.put("menu_id", menuDAO.getMenuItemtName(order.getMenuId()));
+            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
+            jsonMenuItem.put("menu_item", menuDAO.getMenuItem(order.getMenuId()).getName());
             jsonMenuItem.put("amount", order.getAmount());
             jsonMenuItem.put("status", order.getStatus().toString());
+            jsonArray.put(jsonMenuItem);
+        }
+
+        response.setContentType("application/json");
+        out.write(jsonArray.toString());
+
+        log.info("Parsed orders from DB");
+    }
+
+    private void getUnpaidOrders(HttpServletRequest request, HttpServletResponse response, int id) throws IOException {
+        List<Order> orders = orderDAO.readUnpaidOrders(id);
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        JSONArray jsonArray = new JSONArray();
+
+        for (Order order : orders) {
+            JSONObject jsonMenuItem = new JSONObject();
+//            jsonMenuItem.put("id", order.getId());
+//            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
+            Menu item = menuDAO.getMenuItem(order.getMenuId());
+            jsonMenuItem.put("menu_item", item.getName());
+            jsonMenuItem.put("amount", order.getAmount());
+//            jsonMenuItem.put("status", order.getStatus().toString());
+            jsonMenuItem.put("cost", item.getCost());
             jsonArray.put(jsonMenuItem);
         }
 

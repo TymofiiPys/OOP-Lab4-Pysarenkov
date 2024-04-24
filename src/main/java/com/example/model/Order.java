@@ -13,7 +13,7 @@ public class Order {
 
     private int amount;
 
-    public enum StatusOrder {ORDERED, CONSUMED, PAID};
+    public enum StatusOrder {ORDERED, ISSUED_FOR_PAYMENT, PAID};
 
     private StatusOrder status;
 

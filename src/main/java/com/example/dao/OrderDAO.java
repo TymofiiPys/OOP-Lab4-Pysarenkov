@@ -61,6 +61,29 @@ public class OrderDAO {
         return orders;
     }
 
+    public List<Order> readUnpaidOrders(int id) {
+        List<Order> orders = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM orders WHERE orders.client_id = ? AND orders.status = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            statement.setObject(2, "ordered", java.sql.Types.OTHER);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Order order = new Order();
+                order.setId(resultSet.getInt("id"));
+                order.setClientId(resultSet.getInt("client_id"));
+                order.setMenuId(resultSet.getInt("menu_id"));
+                order.setAmount(resultSet.getInt("amount"));
+                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));;
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
     public void createOrder(Order order) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
@@ -78,6 +101,9 @@ public class OrderDAO {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
             for (Order order : orders) {
+                if(order.getAmount() < 1 ){
+                    continue;
+                }
                 statement.setInt(1, order.getClientId());
                 statement.setInt(2, order.getMenuId());
                 statement.setInt(3, order.getAmount());
