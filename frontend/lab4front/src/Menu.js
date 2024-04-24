@@ -56,7 +56,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error placing order:', error);
             });
-        axios.post('api/payment', unpaidOrders)
+        axios.post('/api/payment', unpaidOrders)
             .then(response => {
                 console.log('Payment created successfully:', response.data);
             })

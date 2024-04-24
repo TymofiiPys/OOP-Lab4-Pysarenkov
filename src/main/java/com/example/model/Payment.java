@@ -1,9 +1,11 @@
 package com.example.model;
 
+import java.sql.Timestamp;
+
 public class Payment {
     private int id;
     private int clientId;
-    private String time;
+    private Timestamp time;
     private double cost;
 
     public int getId() {
@@ -22,11 +24,11 @@ public class Payment {
         this.clientId = clientId;
     }
 
-    public String getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 
