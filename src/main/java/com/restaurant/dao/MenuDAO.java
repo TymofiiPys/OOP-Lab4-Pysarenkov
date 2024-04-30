@@ -1,6 +1,6 @@
-package com.example.dao;
+package com.restaurant.dao;
 
-import com.example.model.Menu;
+import com.restaurant.model.Menu;
 
 import java.sql.*;
 import java.util.ArrayList;

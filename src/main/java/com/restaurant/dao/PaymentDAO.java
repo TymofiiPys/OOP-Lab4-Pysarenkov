@@ -1,12 +1,11 @@
-package com.example.dao;
+package com.restaurant.dao;
 
-import com.example.model.Payment;
+import com.restaurant.model.Payment;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
 
 public class PaymentDAO {
     private Connection connection;

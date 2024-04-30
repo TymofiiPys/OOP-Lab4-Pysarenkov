@@ -1,12 +1,8 @@
-package com.example.controller;
+package com.restaurant.controller;
 
-import com.example.dao.OrderDAO;
-import com.example.model.Client;
-import com.example.model.Menu;
-import com.example.model.Order;
+import com.restaurant.model.Menu;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class OrderController {
     public void createOrder(HashMap<Menu, Integer> chosenMenuItems) {

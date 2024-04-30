@@ -1,4 +1,4 @@
-package com.example.model;
+package com.restaurant.model;
 
 import lombok.Builder;
 import lombok.Getter;

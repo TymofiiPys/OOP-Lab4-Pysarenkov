@@ -1,12 +1,12 @@
-package com.example.controller;
+package com.restaurant.controller;
 
-import com.example.dao.ClientDAO;
-import com.example.dao.MenuDAO;
-import com.example.dao.OrderDAO;
-import com.example.dao.PaymentDAO;
-import com.example.model.Menu;
-import com.example.model.Order;
-import com.example.model.Payment;
+import com.restaurant.dao.ClientDAO;
+import com.restaurant.dao.MenuDAO;
+import com.restaurant.dao.OrderDAO;
+import com.restaurant.dao.PaymentDAO;
+import com.restaurant.model.Menu;
+import com.restaurant.model.Order;
+import com.restaurant.model.Payment;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -161,7 +161,13 @@ public class RestaurantController extends HttpServlet {
 
         List<Order> orders = new ArrayList<>();
         for (Integer key : menuItemAmounts.keySet()) {
-            orders.add(new Order(clientId, key, menuItemAmounts.get(key), Order.StatusOrder.ORDERED));
+            orders.add(Order.builder()
+                            .clientId(clientId)
+                            .menuId(key)
+                            .amount(menuItemAmounts.get(key))
+                            .status(Order.StatusOrder.ORDERED)
+                    .build());
+//            orders.add(new Order(clientId, key, menuItemAmounts.get(key), Order.StatusOrder.ORDERED));
         }
 
         response.setContentType("application/json");
@@ -278,10 +284,11 @@ public class RestaurantController extends HttpServlet {
             totalCost += order.getDouble("cost") * order.getInt("amount");
         }
 
-        Payment payment = new Payment();
-        payment.setCost(totalCost);
-        payment.setClientId(clientId);
-        payment.setTime(new Timestamp(new Date().getTime()));
+        Payment payment = Payment.builder()
+                .cost(totalCost)
+                .clientId(clientId)
+                .time(new Timestamp(new Date().getTime()))
+                .build();
 
         response.setContentType("application/json");
         JSONObject jsonResponse = new JSONObject();

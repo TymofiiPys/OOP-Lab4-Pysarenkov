@@ -1,4 +1,4 @@
-<%@ page import="com.example.model.Menu" %>
+<%@ page import="com.restaurant.model.Menu" %>
 <%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: tymofii

@@ -1,8 +1,7 @@
-package com.example.model;
+package com.restaurant.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @Builder

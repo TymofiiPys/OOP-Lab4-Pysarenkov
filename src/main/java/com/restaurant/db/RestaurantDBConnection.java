@@ -1,4 +1,6 @@
-package com.example.db;
+package com.restaurant.db;
+
+import lombok.SneakyThrows;
 
 import java.sql.*;
 
@@ -9,7 +11,9 @@ public class RestaurantDBConnection {
 //        Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
 //                "postgres", "password");
 //    }
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+
+    @SneakyThrows({ClassNotFoundException.class, SQLException.class})
+    public static Connection getConnection() {
         if(conn == null) {
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
