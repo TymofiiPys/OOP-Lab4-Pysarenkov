@@ -14,12 +14,4 @@ public class RestaurantDB {
         }
         conn.close();
     }
-
-    public static void main(String[] args) {
-        try {
-            new RestaurantDB();
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
