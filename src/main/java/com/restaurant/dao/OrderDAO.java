@@ -1,7 +1,6 @@
-package com.example.dao;
+package com.restaurant.dao;
 
-import com.example.model.Menu;
-import com.example.model.Order;
+import com.restaurant.model.Order;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class OrderDAO {
     public List<Order> readOrders(boolean readUnpaid) {
         List<Order> orders = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM orders ";
+            String sql = "SELECT * FROM orders ORDER BY orders.id";
             if (readUnpaid) {
                 sql += "WHERE status = ordered";
             }
