@@ -107,24 +107,7 @@ public class RestaurantController extends HttpServlet {
     }
 
     private void getMenu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Menu> menu = menuDAO.readMenu();
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-        JSONArray jsonArray = new JSONArray();
 
-        for (Menu menuItem : menu) {
-            JSONObject jsonMenuItem = new JSONObject();
-            jsonMenuItem.put("id", menuItem.getId());
-            jsonMenuItem.put("name", menuItem.getName());
-            jsonMenuItem.put("meal", menuItem.isMealOrDrink());
-            jsonMenuItem.put("cost", menuItem.getCost());
-            jsonArray.put(jsonMenuItem);
-        }
-
-        response.setContentType("application/json");
-        out.write(jsonArray.toString());
-
-        log.info("Parsed menu from DB");
     }
 
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
