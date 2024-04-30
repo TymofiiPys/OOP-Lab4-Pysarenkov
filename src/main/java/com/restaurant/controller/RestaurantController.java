@@ -49,9 +49,6 @@ public class RestaurantController extends HttpServlet {
         String action = request.getServletPath();
 
         switch (action) {
-            case "/menu":
-                getMenu(request, response);
-                break;
             case "/orders":
                 if (request.getParameter("which") == null)
                     getOrders(request, response);
@@ -104,10 +101,6 @@ public class RestaurantController extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void getMenu(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

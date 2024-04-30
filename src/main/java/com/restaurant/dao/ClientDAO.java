@@ -30,7 +30,7 @@ public class ClientDAO {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
             while (resultSet.next()) {
-                Client client = new Client();
+                Client client = Client.builder().build();
                 client.setId(resultSet.getInt("id"));
                 client.setName(resultSet.getString("name"));
                 clients.add(client);

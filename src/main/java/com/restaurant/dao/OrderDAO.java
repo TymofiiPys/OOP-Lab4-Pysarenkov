@@ -81,7 +81,7 @@ public class OrderDAO {
 //            statement.setString(1, "ordered");
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Order order = new Order();
+                Order order = Order.builder().build();
                 order.setId(resultSet.getInt("id"));
                 order.setClientId(resultSet.getInt("client_id"));
                 order.setMenuId(resultSet.getInt("menu_id"));
@@ -105,7 +105,7 @@ public class OrderDAO {
             statement.setObject(2, "issued_for_payment", java.sql.Types.OTHER);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Order order = new Order();
+                Order order = Order.builder().build();
                 order.setId(resultSet.getInt("id"));
                 order.setClientId(resultSet.getInt("client_id"));
                 order.setMenuId(resultSet.getInt("menu_id"));

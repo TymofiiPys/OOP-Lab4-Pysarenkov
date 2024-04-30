@@ -34,7 +34,7 @@ public class MenuDAO {
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Menu menu = new Menu();
+                Menu menu = Menu.builder().build();
                 menu.setId(resultSet.getInt("id"));
                 menu.setName(resultSet.getString("name"));
                 menu.setMealOrDrink(resultSet.getBoolean("meal_drink"));
@@ -62,7 +62,7 @@ public class MenuDAO {
 //    }
 
     public Menu getMenuItem(int id) {
-        Menu item = new Menu();
+        Menu item = Menu.builder().build();
         try {
             String sql = "SELECT * FROM menu WHERE menu.id = " + id;
             PreparedStatement statement = connection.prepareStatement(sql);
