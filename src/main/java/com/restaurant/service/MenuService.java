@@ -19,7 +19,7 @@ public class MenuService {
     private final MenuDAO menuDAO = new MenuDAO(conn);
 
     public List<Menu> getMenu() {
-        log.info("Parsed menu from DB");
+//        log.info("Parsed menu from DB");
         return menuDAO.readMenu();
 
     }
