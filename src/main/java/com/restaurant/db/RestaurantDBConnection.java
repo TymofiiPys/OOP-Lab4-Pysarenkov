@@ -18,6 +18,7 @@ public class RestaurantDBConnection {
             Class.forName("org.postgresql.Driver");
             Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
                     "postgres", "password");
+            conn.setAutoCommit(false);
         }
         return conn;
     }

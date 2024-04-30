@@ -4,6 +4,7 @@ import com.restaurant.dao.ClientDAO;
 import com.restaurant.dao.MenuDAO;
 import com.restaurant.dao.OrderDAO;
 import com.restaurant.dao.PaymentDAO;
+import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Menu;
 import com.restaurant.model.Order;
 import com.restaurant.model.Payment;
@@ -30,28 +31,15 @@ public class RestaurantController extends HttpServlet {
     private OrderDAO orderDAO;
     private ClientDAO clientDAO;
     private PaymentDAO paymentDAO;
-    private Connection conn;
+    private Connection conn = RestaurantDBConnection.getConnection();
     private final Logger log = LogManager.getRootLogger();
 
     @Override
     public void init() throws ServletException {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
-                    "postgres", "password");
-            conn.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         menuDAO = new MenuDAO(conn);
         orderDAO = new OrderDAO(conn);
-        clientDAO = new ClientDAO(conn);
         paymentDAO = new PaymentDAO(conn);
+        clientDAO = new ClientDAO(conn);
         log.trace("Configuration File Defined To Be :: " + System.getProperty("log4j.configurationFile"));
 
     }
