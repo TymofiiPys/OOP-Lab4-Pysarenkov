@@ -2,25 +2,19 @@ package com.restaurant.service;
 
 import com.restaurant.dao.MenuDAO;
 import com.restaurant.db.RestaurantDBConnection;
-import com.restaurant.model.Menu;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.restaurant.dto.MenuDTO;
+import com.restaurant.mapper.MenuMapper;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.util.List;
 
 public class MenuService {
     private final Connection conn = RestaurantDBConnection.getConnection();
     private final MenuDAO menuDAO = new MenuDAO(conn);
+    private final MenuMapper mapper = MenuMapper.INSTANCE;
 
-    public List<Menu> getMenu() {
+    public List<MenuDTO> getMenu() {
 //        log.info("Parsed menu from DB");
-        return menuDAO.readMenu();
-
+        return menuDAO.readMenu().stream().map(mapper::toMenuDTO).toList();
     }
 }
