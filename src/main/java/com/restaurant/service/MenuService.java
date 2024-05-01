@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MenuService {
     private final Connection conn = RestaurantDBConnection.getConnection();
-    private final MenuDAO menuDAO = new MenuDAO(conn);
+    private final MenuDAO menuDAO = new MenuDAO();
     private final MenuMapper mapper = MenuMapper.INSTANCE;
 
     public List<MenuDTO> getMenu() {

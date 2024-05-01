@@ -46,22 +46,11 @@ public class RestaurantController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getServletPath();
-
-        switch (action) {
-            case "/orders":
-                if (request.getParameter("which") == null)
-                    getOrders(request, response);
-                else if (request.getParameter("which").equals("issued"))
-                    getUnpaidOrders(request, response, Integer.parseInt(request.getParameter("clid")));
-                break;
-            default:
-                response.setContentType("text/html");
-                PrintWriter out = response.getWriter();
-                out.println("<html><body>");
-                out.println("<h1>" + "message" + "</h1>");
-                out.println("</body></html>");
-        }
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>" + "message" + "</h1>");
+        out.println("</body></html>");
     }
 
     @Override
@@ -126,10 +115,10 @@ public class RestaurantController extends HttpServlet {
         List<Order> orders = new ArrayList<>();
         for (Integer key : menuItemAmounts.keySet()) {
             orders.add(Order.builder()
-                            .clientId(clientId)
-                            .menuId(key)
-                            .amount(menuItemAmounts.get(key))
-                            .status(Order.StatusOrder.ORDERED)
+                    .clientId(clientId)
+                    .menuId(key)
+                    .amount(menuItemAmounts.get(key))
+                    .status(Order.StatusOrder.ORDERED)
                     .build());
 //            orders.add(new Order(clientId, key, menuItemAmounts.get(key), Order.StatusOrder.ORDERED));
         }
@@ -172,7 +161,7 @@ public class RestaurantController extends HttpServlet {
         response.setContentType("application/json");
         out.write(jsonArray.toString());
 
-        log.info("Parsed orders from DB");
+
     }
 
     private void getUnpaidOrders(HttpServletRequest request, HttpServletResponse response, int clientId) throws IOException {
@@ -211,7 +200,7 @@ public class RestaurantController extends HttpServlet {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject order = jsonArray.getJSONObject(i);
             int orderId = order.getInt("id");
-            if(statusOrder == null) {
+            if (statusOrder == null) {
                 statusOrder = order.get("status").equals("ORDERED") ?
                         Order.StatusOrder.ISSUED_FOR_PAYMENT :
                         Order.StatusOrder.PAID;
