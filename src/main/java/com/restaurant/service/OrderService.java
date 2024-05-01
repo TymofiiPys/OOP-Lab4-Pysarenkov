@@ -2,9 +2,11 @@ package com.restaurant.service;
 
 import com.restaurant.dao.OrderDAO;
 import com.restaurant.dto.OrderDTO;
+import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.mapper.OrderMapper;
 import com.restaurant.model.Order;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class OrderService {
@@ -17,5 +19,9 @@ public class OrderService {
 
     public List<OrderDTO> getUnpaidOrders(int clientId) {
         return orderDAO.readUnpaidOrders(clientId).stream().map(mapper::toOrderDTO).toList();
+    }
+
+    public void createOrders(OrderReceiveDTO[] orders) {
+        orderDAO.createOrder(Arrays.stream(orders).map(mapper::fromOrderReceive).toList().forEach(order -> order.setStatus(Order.StatusOrder.ORDERED)));
     }
 }

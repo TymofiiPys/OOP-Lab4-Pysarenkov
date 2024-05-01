@@ -2,6 +2,7 @@ package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.OrderDTO;
+import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.model.Order;
 import com.restaurant.service.OrderService;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "OrderServlet", value = "/orders")
 public class OrderController extends HttpServlet {
@@ -31,5 +33,14 @@ public class OrderController extends HttpServlet {
         resp.setContentType("application/json");
         resp.getWriter().write(objectMapper.writeValueAsString(orders));
 //        log.info("Parsed orders from DB");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        OrderReceiveDTO[] orders = objectMapper.readValue(
+                req.getReader().lines().collect(Collectors.joining()),
+                OrderReceiveDTO[].class);
+        orderService.createOrders(orders);
+        //TODO : logs and responses
     }
 }

@@ -34,7 +34,7 @@ function Menu() {
                 console.error('Error placing order:', error);
             });
     }
-
+    /* TODO: form json as an array of OrderReceiveDTOs */
     const handleAmountChange = (itemId, amount) => {
         setOrder(prevOrder => ({
             ...prevOrder,
