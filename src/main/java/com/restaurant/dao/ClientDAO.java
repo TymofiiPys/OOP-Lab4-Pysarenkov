@@ -1,5 +1,6 @@
 package com.restaurant.dao;
 
+import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Client;
 
 import java.sql.*;
@@ -10,8 +11,8 @@ public class ClientDAO {
 
     private Connection connection;
 
-    public ClientDAO(Connection connection) {
-        this.connection = connection;
+    public ClientDAO() {
+        this.connection = RestaurantDBConnection.getConnection();
     }
 
     public void createClient(Client client) {

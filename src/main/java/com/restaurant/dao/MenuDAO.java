@@ -1,5 +1,6 @@
 package com.restaurant.dao;
 
+import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Menu;
 
 import java.sql.*;
@@ -11,8 +12,8 @@ public class MenuDAO {
     private Connection connection;
 
     // Constructor to initialize the database connection
-    public MenuDAO(Connection connection) {
-        this.connection = connection;
+    public MenuDAO() {
+        this.connection = RestaurantDBConnection.getConnection();
     }
 
     public void createMenu(Menu menu) {

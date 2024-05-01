@@ -1,5 +1,6 @@
 package com.restaurant.dao;
 
+import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Payment;
 
 import java.math.BigDecimal;
@@ -10,8 +11,8 @@ import java.sql.SQLException;
 public class PaymentDAO {
     private Connection connection;
 
-    public PaymentDAO(Connection connection) {
-        this.connection = connection;
+    public PaymentDAO() {
+        this.connection = RestaurantDBConnection.getConnection();
     }
 
     public void createPayment(Payment payment) throws SQLException {

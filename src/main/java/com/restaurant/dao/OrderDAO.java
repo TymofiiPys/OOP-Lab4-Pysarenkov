@@ -1,5 +1,6 @@
 package com.restaurant.dao;
 
+import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Order;
 
 import java.sql.*;
@@ -11,8 +12,8 @@ public class OrderDAO {
     private Connection connection;
 
     // Constructor to initialize the database connection
-    public OrderDAO(Connection connection) {
-        this.connection = connection;
+    public OrderDAO() {
+        this.connection = RestaurantDBConnection.getConnection();
     }
 
     public void createOrder(Order order) {
