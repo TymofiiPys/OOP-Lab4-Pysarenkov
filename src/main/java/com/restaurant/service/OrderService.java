@@ -3,7 +3,6 @@ package com.restaurant.service;
 import com.restaurant.dao.ClientDAO;
 import com.restaurant.dao.MenuDAO;
 import com.restaurant.dao.OrderDAO;
-import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.mapper.OrderMapper;
@@ -53,5 +52,9 @@ public class OrderService {
         List<Order> ordersMapped = orders.stream().map(mapper::fromOrderReceive).toList();
         ordersMapped.forEach(order -> order.setStatus(Order.StatusOrder.ORDERED));
         orderDAO.createOrder(ordersMapped);
+    }
+
+    public void updateOrderStatus(List<Integer> orderIds, Order.StatusOrder status) {
+        orderDAO.updateOrderStatus(orderIds, status);
     }
 }

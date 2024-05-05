@@ -1,9 +1,9 @@
 package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
+import com.restaurant.model.Order;
 import com.restaurant.service.OrderService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -56,6 +56,13 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        Order.StatusOrder status = Order.StatusOrder.valueOf(req.getParameter("status"));
+        List<Integer> orderIdsToIssue = Arrays.asList(
+                objectMapper.readValue(
+                        req.getReader().lines().collect(Collectors.joining()),
+                        Integer[].class
+                )
+        );
+        orderService.updateOrderStatus(orderIdsToIssue, status);
     }
 }
