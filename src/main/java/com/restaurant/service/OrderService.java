@@ -1,24 +1,52 @@
 package com.restaurant.service;
 
+import com.restaurant.dao.ClientDAO;
+import com.restaurant.dao.MenuDAO;
 import com.restaurant.dao.OrderDAO;
 import com.restaurant.dto.OrderDTO;
+import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.mapper.OrderMapper;
+import com.restaurant.model.Menu;
 import com.restaurant.model.Order;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
     private final OrderDAO orderDAO = new OrderDAO();
+    private final MenuDAO menuDAO = new MenuDAO();
+    private final ClientDAO clientDAO = new ClientDAO();
     private final OrderMapper mapper = OrderMapper.INSTANCE;
 
-    public List<OrderDTO> getAllOrders() {
-        return orderDAO.readOrders(false).stream().map(mapper::toOrderDTO).toList();
+    public List<OrderDisplayDTO> getAllOrders() {
+        return toOrderDispleyDTOList(orderDAO.readOrders(null, null));
     }
 
-    public List<OrderDTO> getUnpaidOrders(int clientId) {
-        return orderDAO.readUnpaidOrders(clientId).stream().map(mapper::toOrderDTO).toList();
+    public List<OrderDisplayDTO> getOrdersFilteredByStatus(String status) {
+        return toOrderDispleyDTOList(orderDAO.readOrders(Order.StatusOrder.valueOf(status), null));
+    }
+
+    public List<OrderDisplayDTO> getOrdersFilteredByStatusAndId(String status, int clientId) {
+        return toOrderDispleyDTOList(orderDAO.readOrders(Order.StatusOrder.valueOf(status), clientId));
+
+    }
+
+    private List<OrderDisplayDTO> toOrderDispleyDTOList(List<Order> orders) {
+        List<OrderDisplayDTO> orderDisplay = new ArrayList<>();
+        for (Order order: orders) {
+            Menu orderedItem = menuDAO.getMenuItem(order.getMenuId());
+            orderDisplay.add(
+                    OrderDisplayDTO.builder()
+                            .id(order.getId())
+                            .clientName(clientDAO.getClientName(order.getClientId()))
+                            .menuItemName(orderedItem.getName())
+                            .amount(order.getAmount())
+                            .cost(order.getAmount() * orderedItem.getCost())
+                            .build()
+            );
+        }
+        return orderDisplay;
     }
 
     public void createOrders(List<OrderReceiveDTO> orders) {

@@ -55,7 +55,7 @@ public class OrderDAO {
         }
     }
 
-    public List<Order> getUnpaidOrders() {
+//    public List<Order> getUnpaidOrders() {
 //        List<Order> orders = new ArrayList<>();
 //        try {
 //            PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE status = ?");
@@ -73,26 +73,33 @@ public class OrderDAO {
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
-        return readOrders(true);
-    }
+//        return readOrders(true);
+//    }
 
-    public List<Order> readOrders(boolean readUnpaid) {
+    public List<Order> readOrders(Order.StatusOrder status, Integer clientId) {
         List<Order> orders = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM orders ORDER BY orders.id";
-            if (readUnpaid) {
-                sql += "WHERE status = ordered";
+            StringBuilder sql = new StringBuilder("SELECT * FROM orders ORDER BY orders.id");
+            if (status != null) {
+                sql
+                        .append("WHERE status = ")
+                        .append(status.name().toLowerCase());
             }
-            PreparedStatement statement = connection.prepareStatement(sql);
-//            statement.setString(1, "ordered");
+            if (clientId != null) {
+                sql
+                        .append("WHERE orders.client_id = ")
+                        .append(clientId);
+            }
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Order order = Order.builder().build();
-                order.setId(resultSet.getInt("id"));
-                order.setClientId(resultSet.getInt("client_id"));
-                order.setMenuId(resultSet.getInt("menu_id"));
-                order.setAmount(resultSet.getInt("amount"));
-                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
+                Order order = Order.builder()
+                        .id(resultSet.getInt("id"))
+                        .clientId(resultSet.getInt("client_id"))
+                        .menuId(resultSet.getInt("menu_id"))
+                        .amount(resultSet.getInt("amount"))
+                        .status(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()))
+                        .build();
                 orders.add(order);
             }
         } catch (SQLException e) {
@@ -101,29 +108,29 @@ public class OrderDAO {
         return orders;
     }
 
-    public List<Order> readUnpaidOrders(int id) {
-        List<Order> orders = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM orders WHERE orders.client_id = ? AND orders.status = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            statement.setObject(2, "issued_for_payment", java.sql.Types.OTHER);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Order order = Order.builder().build();
-                order.setId(resultSet.getInt("id"));
-                order.setClientId(resultSet.getInt("client_id"));
-                order.setMenuId(resultSet.getInt("menu_id"));
-                order.setAmount(resultSet.getInt("amount"));
-                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
-                ;
-                orders.add(order);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
-    }
+//    public List<Order> readUnpaidOrders(int id) {
+//        List<Order> orders = new ArrayList<>();
+//        try {
+//            String sql = "SELECT * FROM orders WHERE orders.client_id = ? AND orders.status = ?";
+//            PreparedStatement statement = connection.prepareStatement(sql);
+//            statement.setInt(1, id);
+//            statement.setObject(2, "issued_for_payment", java.sql.Types.OTHER);
+//            ResultSet resultSet = statement.executeQuery();
+//            while (resultSet.next()) {
+//                Order order = Order.builder().build();
+//                order.setId(resultSet.getInt("id"));
+//                order.setClientId(resultSet.getInt("client_id"));
+//                order.setMenuId(resultSet.getInt("menu_id"));
+//                order.setAmount(resultSet.getInt("amount"));
+//                order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
+//                ;
+//                orders.add(order);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return orders;
+//    }
 
     public int getClientID(OrderDisplayDTO order) {
         try {
