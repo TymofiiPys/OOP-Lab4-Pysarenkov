@@ -2,11 +2,13 @@ package com.restaurant.dao;
 
 import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Client;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class ClientDAO {
 
     private Connection connection;
@@ -21,7 +23,7 @@ public class ClientDAO {
             statement.setString(1, client.getName());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when CREATING CLIENT " + client.toString() + ", stacktrace: ", e);
         }
     }
 
@@ -37,21 +39,23 @@ public class ClientDAO {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING CLIENTS, stacktrace: ", e);
         }
         return clients;
     }
 
-    public String getClientName(int id){
+    public String getClientName(int clientId){
         String name = "";
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + id);
+            ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + clientId);
             while (resultSet.next()) {
                 name = resultSet.getString("name");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when GETTING CLIENT'S ID ("
+                    + clientId
+                    + ") check DB for existing of client with this id, stacktrace: ", e);
         }
         return name;
     }
@@ -63,7 +67,9 @@ public class ClientDAO {
             statement.setInt(2, client.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when UPDATING CLIENT ("
+                    + client.toString()
+                    + ") check DB for existing of client with this id, stacktrace: ", e);
         }
     }
 
@@ -73,7 +79,9 @@ public class ClientDAO {
             statement.setInt(1, clientId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when DELETING CLIENT WITH ID"
+                    + clientId
+                    + ") check DB for existing of client with this id, stacktrace: ", e);
         }
     }
 }

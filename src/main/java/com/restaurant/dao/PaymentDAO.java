@@ -15,12 +15,17 @@ public class PaymentDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public void createPayment(Payment payment) throws SQLException {
+    public void createPayment(Payment payment) {
 
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO payment (client_id, time, cost) VALUES (?, ?, ?)");
-        statement.setInt(1, payment.getClientId());
-        statement.setTimestamp(2, payment.getTime());
-        statement.setBigDecimal(3, BigDecimal.valueOf(payment.getCost()));
-        statement.executeUpdate();
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("INSERT INTO payment (client_id, time, cost) VALUES (?, ?, ?)");
+            statement.setInt(1, payment.getClientId());
+            statement.setTimestamp(2, payment.getTime());
+            statement.setBigDecimal(3, BigDecimal.valueOf(payment.getCost()));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -38,6 +38,7 @@ public class OrderController extends HttpServlet {
         }
 
         resp.setContentType("application/json");
+        resp.setStatus(HttpServletResponse.SC_OK);
         resp.getWriter().write(objectMapper.writeValueAsString(orders));
 //        log.info("Parsed orders from DB");
     }
@@ -51,6 +52,7 @@ public class OrderController extends HttpServlet {
                 )
         );
         orderService.createOrders(orders);
+        resp.setStatus(HttpServletResponse.SC_OK);
         //TODO : logs and responses
     }
 
@@ -64,5 +66,6 @@ public class OrderController extends HttpServlet {
                 )
         );
         orderService.updateOrderStatus(orderIdsToIssue, status);
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

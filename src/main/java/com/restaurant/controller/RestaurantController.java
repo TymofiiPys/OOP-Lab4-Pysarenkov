@@ -39,10 +39,10 @@ public class RestaurantController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        menuDAO = new MenuDAO(conn);
-        orderDAO = new OrderDAO(conn);
-        paymentDAO = new PaymentDAO(conn);
-        clientDAO = new ClientDAO(conn);
+        menuDAO = new MenuDAO();
+        orderDAO = new OrderDAO();
+        paymentDAO = new PaymentDAO();
+        clientDAO = new ClientDAO();
         log.trace("Configuration File Defined To Be :: " + System.getProperty("log4j.configurationFile"));
 
     }
@@ -95,7 +95,7 @@ public class RestaurantController extends HttpServlet {
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Parse JSON request body to extract order data
 
-        OrderDTO[] orders = new ObjectMapper().readValue(request.getReader().lines().collect(Collectors.joining()), OrderDTO[].class);
+//        OrderDTO[] orders = new ObjectMapper().readValue(request.getReader().lines().collect(Collectors.joining()), OrderDTO[].class);
 
         JSONObject jsonBody = new JSONObject(request.getReader().lines().collect(Collectors.joining()));
 
@@ -143,7 +143,7 @@ public class RestaurantController extends HttpServlet {
     }
 
     private void getOrders(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<Order> orders = orderDAO.readOrders(false);
+        List<Order> orders = orderDAO.readOrders(null, null);
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         JSONArray jsonArray = new JSONArray();
@@ -168,7 +168,7 @@ public class RestaurantController extends HttpServlet {
     }
 
     private void getUnpaidOrders(HttpServletRequest request, HttpServletResponse response, int clientId) throws IOException {
-        List<Order> orders = orderDAO.readUnpaidOrders(clientId);
+        List<Order> orders = orderDAO.readOrders(null, null);
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         JSONArray jsonArray = new JSONArray();

@@ -29,5 +29,6 @@ public class PaymentController extends HttpServlet {
                 )
         );
         paymentService.createPayment(payments);
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

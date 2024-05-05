@@ -48,14 +48,14 @@ public class MenuDAO {
         return menus;
     }
 
-//    public String getMenuItemName(int id){
+//    public String getMenuItemName(int id) {
 //        String name = "";
 //        try {
-//            Statement statement = connection.createStatement();
-//            ResultSet resultSet = statement.executeQuery("SELECT menu.name FROM menu WHERE menu.id = " + id);
-//            while (resultSet.next()) {
-//                name = resultSet.getString("name");
-//            }
+//            PreparedStatement statement = connection.prepareStatement("SELECT menu.name FROM menu WHERE menu.id = ?");
+//            statement.setInt(1, id);
+//            ResultSet resultSet = statement.executeQuery();
+//            resultSet.next();
+//            name = resultSet.getString("name");
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
@@ -63,20 +63,21 @@ public class MenuDAO {
 //    }
 
     public Menu getMenuItem(int id) {
-        Menu item = Menu.builder().build();
         try {
             String sql = "SELECT * FROM menu WHERE menu.id = " + id;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            item.setId(resultSet.getInt("id"));
-            item.setName(resultSet.getString("name"));
-            item.setMealOrDrink(resultSet.getBoolean("meal_drink"));
-            item.setCost(resultSet.getDouble("cost"));
+            return Menu.builder()
+                    .id(resultSet.getInt("id"))
+                    .name(resultSet.getString("name"))
+                    .mealOrDrink(resultSet.getBoolean("meal_drink"))
+                    .cost(resultSet.getDouble("cost"))
+                    .build();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return item;
+        return null;
     }
 
     public void updateMenu(Menu menu) {

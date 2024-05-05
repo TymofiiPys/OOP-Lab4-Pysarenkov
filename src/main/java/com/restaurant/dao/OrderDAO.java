@@ -31,7 +31,7 @@ public class OrderDAO {
         }
     }
 
-    public void createOrder(List<Order> orders) throws SQLException {
+    public void createOrder(List<Order> orders) {
         try {
             connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
@@ -49,7 +49,6 @@ public class OrderDAO {
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
-            throw e;
         } finally {
             connection.setAutoCommit(true);
         }
@@ -145,7 +144,7 @@ public class OrderDAO {
         return -1;
     }
 
-    public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) throws SQLException {
+    public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) {
         if (status == null) {
             return;
         }
@@ -165,7 +164,6 @@ public class OrderDAO {
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
-            throw e;
         } finally {
             connection.setAutoCommit(true);
         }
