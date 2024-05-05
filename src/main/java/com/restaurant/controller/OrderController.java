@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,9 +38,12 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        OrderReceiveDTO[] orders = objectMapper.readValue(
-                req.getReader().lines().collect(Collectors.joining()),
-                OrderReceiveDTO[].class);
+        List<OrderReceiveDTO> orders = Arrays.asList(
+                objectMapper.readValue(
+                        req.getReader().lines().collect(Collectors.joining()),
+                        OrderReceiveDTO[].class
+                )
+        );
         orderService.createOrders(orders);
         //TODO : logs and responses
     }

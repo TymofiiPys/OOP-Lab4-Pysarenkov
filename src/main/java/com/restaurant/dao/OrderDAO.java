@@ -134,7 +134,6 @@ public class OrderDAO {
             return resultSet.getInt("client_id");
         } catch (SQLException e) {
             e.printStackTrace();
-            e.
         }
         return -1;
     }

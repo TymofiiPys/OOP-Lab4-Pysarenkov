@@ -21,7 +21,9 @@ public class OrderService {
         return orderDAO.readUnpaidOrders(clientId).stream().map(mapper::toOrderDTO).toList();
     }
 
-    public void createOrders(OrderReceiveDTO[] orders) {
-        orderDAO.createOrder(Arrays.stream(orders).map(mapper::fromOrderReceive).toList().forEach(order -> order.setStatus(Order.StatusOrder.ORDERED)));
+    public void createOrders(List<OrderReceiveDTO> orders) {
+        List<Order> ordersMapped = orders.stream().map(mapper::fromOrderReceive).toList();
+        ordersMapped.forEach(order -> order.setStatus(Order.StatusOrder.ORDERED));
+        orderDAO.createOrder(ordersMapped);
     }
 }
