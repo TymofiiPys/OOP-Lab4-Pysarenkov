@@ -1,10 +1,13 @@
 package com.restaurant.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dao.ClientDAO;
 import com.restaurant.dao.MenuDAO;
 import com.restaurant.dao.OrderDAO;
 import com.restaurant.dao.PaymentDAO;
 import com.restaurant.db.RestaurantDBConnection;
+import com.restaurant.dto.OrderDTO;
 import com.restaurant.model.Menu;
 import com.restaurant.model.Order;
 import com.restaurant.model.Payment;
@@ -58,9 +61,6 @@ public class RestaurantController extends HttpServlet {
         String action = request.getServletPath();
 
         switch (action) {
-            case "/orders":
-                createOrder(request, response);
-                break;
             case "/payment":
                 createPayment(request, response);
                 break;
@@ -94,6 +94,9 @@ public class RestaurantController extends HttpServlet {
 
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Parse JSON request body to extract order data
+
+        OrderDTO[] orders = new ObjectMapper().readValue(request.getReader().lines().collect(Collectors.joining()), OrderDTO[].class);
+
         JSONObject jsonBody = new JSONObject(request.getReader().lines().collect(Collectors.joining()));
 
         log.info("Order received: \n " + jsonBody.toString());

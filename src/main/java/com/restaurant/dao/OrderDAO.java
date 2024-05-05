@@ -1,6 +1,7 @@
 package com.restaurant.dao;
 
 import com.restaurant.db.RestaurantDBConnection;
+import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.model.Order;
 
 import java.sql.*;
@@ -25,12 +26,14 @@ public class OrderDAO {
             statement.setString(4, order.getStatus().name().toLowerCase());
             statement.executeUpdate();
         } catch (SQLException e) {
+            // TODO (everywhere): change e.printStackTrace() to log4j's log.error("Message", e)
             e.printStackTrace();
         }
     }
 
     public void createOrder(List<Order> orders) throws SQLException {
         try {
+            connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
             for (Order order : orders) {
                 if (order.getAmount() < 1) {
@@ -47,6 +50,8 @@ public class OrderDAO {
             connection.rollback();
             e.printStackTrace();
             throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
@@ -88,7 +93,6 @@ public class OrderDAO {
                 order.setMenuId(resultSet.getInt("menu_id"));
                 order.setAmount(resultSet.getInt("amount"));
                 order.setStatus(Order.StatusOrder.valueOf(resultSet.getString("status").toUpperCase()));
-                ;
                 orders.add(order);
             }
         } catch (SQLException e) {
@@ -121,6 +125,20 @@ public class OrderDAO {
         return orders;
     }
 
+    public int getClientID(OrderDisplayDTO order) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT orders.client_id FROM orders WHERE orders.id = ?");
+            statement.setInt(1, order.getId());
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("client_id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.
+        }
+        return -1;
+    }
+
     public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) throws SQLException {
         if (status == null) {
             return;
@@ -130,6 +148,7 @@ public class OrderDAO {
 //        statement.setInt(2, id);
 //        statement.executeUpdate();
         try {
+            connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");
             for (int id : ids) {
                 statement.setObject(1, status.name().toLowerCase(), Types.OTHER);
@@ -141,6 +160,8 @@ public class OrderDAO {
             connection.rollback();
             e.printStackTrace();
             throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 }
