@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@WebServlet(name = "RestaurantServlet", value = "/")
+@WebServlet(name = "RestaurantServlet", value = "/old")
 public class RestaurantController extends HttpServlet {
 
     private MenuDAO menuDAO;
@@ -58,38 +58,22 @@ public class RestaurantController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getServletPath();
-
-        switch (action) {
-            case "/payment":
-                createPayment(request, response);
-                break;
-            default:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getServletPath();
-
-        switch (action) {
-            case "/orders":
-                updateOrderStatus(request, response);
-                break;
-            default:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Override
     public void destroy() {
         super.destroy();
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            conn.close();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void createOrder(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -128,14 +112,10 @@ public class RestaurantController extends HttpServlet {
 
         response.setContentType("application/json");
         JSONObject jsonResponse = new JSONObject();
-        try {
-            orderDAO.createOrder(orders);
-        } catch (SQLException e) {
-            jsonResponse.put("message", "Database error");
-            response.getWriter().write(jsonResponse.toString());
-            log.error("DB error");
-            return;
-        }
+        orderDAO.createOrder(orders);
+        jsonResponse.put("message", "Database error");
+        response.getWriter().write(jsonResponse.toString());
+        log.error("DB error");
 
         jsonResponse.put("message", "Order submitted successfully");
         log.info("DB insertion successful");
@@ -213,14 +193,10 @@ public class RestaurantController extends HttpServlet {
 
         response.setContentType("application/json");
         JSONObject jsonResponse = new JSONObject();
-        try {
-            orderDAO.updateOrderStatus(orderIds, statusOrder);
-        } catch (SQLException e) {
-            jsonResponse.put("message", "Database error");
-            response.getWriter().write(jsonResponse.toString());
-            log.error("DB error");
-            return;
-        }
+        orderDAO.updateOrderStatus(orderIds, statusOrder);
+        jsonResponse.put("message", "Database error");
+        response.getWriter().write(jsonResponse.toString());
+        log.error("DB error");
 
         jsonResponse.put("message", "Order status updated successfully");
         log.info("DB update successful");
@@ -248,14 +224,10 @@ public class RestaurantController extends HttpServlet {
 
         response.setContentType("application/json");
         JSONObject jsonResponse = new JSONObject();
-        try {
-            paymentDAO.createPayment(payment);
-        } catch (SQLException e) {
-            jsonResponse.put("message", "Database error");
-            response.getWriter().write(jsonResponse.toString());
-            log.error("DB error");
-            return;
-        }
+        paymentDAO.createPayment(payment);
+        jsonResponse.put("message", "Database error");
+        response.getWriter().write(jsonResponse.toString());
+        log.error("DB error");
 
         jsonResponse.put("message", "Order submitted successfully");
         log.info("DB insertion successful");
