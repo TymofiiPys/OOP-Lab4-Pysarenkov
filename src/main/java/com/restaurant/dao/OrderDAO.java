@@ -20,25 +20,31 @@ public class OrderDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public void createOrder(Order order) {
+    public Order createOrder(Order order) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1, order.getClientId());
             statement.setInt(2, order.getMenuId());
             statement.setInt(3, order.getAmount());
             statement.setString(4, order.getStatus().name().toLowerCase());
             statement.executeUpdate();
+            ResultSet idRS = statement.getGeneratedKeys();
+            idRS.next();
+            order.setId(idRS.getInt(1));
         } catch (SQLException e) {
-            // TODO (everywhere): change e.printStackTrace() to log4j's log.error("Message", e)
             log.error("SQLException when CREATING ORDER (" + order.toString() + " stacktrace: ", e);
+            return null;
         }
+        return order;
     }
 
     @SneakyThrows
-    public void createOrder(List<Order> orders) {
+    public List<Order> createOrder(List<Order> orders) {
         try {
             connection.setAutoCommit(false);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO orders (client_id, menu_id, amount, status) VALUES (?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
             for (Order order : orders) {
                 if (order.getAmount() < 1) {
                     continue;
@@ -48,14 +54,19 @@ public class OrderDAO {
                 statement.setInt(3, order.getAmount());
                 statement.setObject(4, order.getStatus().name().toLowerCase(), java.sql.Types.OTHER);
                 statement.executeUpdate();
+                ResultSet idRS = statement.getGeneratedKeys();
+                idRS.next();
+                order.setId(idRS.getInt(1));
             }
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             log.error("SQLException when CREATING ORDERS (" + orders.toString() + " stacktrace: ", e);
+            return null;
         } finally {
             connection.setAutoCommit(true);
         }
+        return orders;
     }
 
 //    public List<Order> getUnpaidOrders() {
@@ -107,6 +118,7 @@ public class OrderDAO {
             }
         } catch (SQLException e) {
             log.error("SQLException when READING ORDERS with STATUS and ID stacktrace: ", e);
+            return null;
         }
         return orders;
     }
@@ -153,10 +165,6 @@ public class OrderDAO {
         if (status == null) {
             return;
         }
-//        PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");
-//        statement.setObject(1, status.name().toLowerCase(), Types.OTHER);
-//        statement.setInt(2, id);
-//        statement.executeUpdate();
         try {
             connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");

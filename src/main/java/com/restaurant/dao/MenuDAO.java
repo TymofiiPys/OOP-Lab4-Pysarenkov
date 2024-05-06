@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class MenuDAO {
@@ -18,16 +19,22 @@ public class MenuDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public void createMenu(Menu menu) {
+    public Menu createMenu(Menu menu) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO menu (name, meal_drink, cost) VALUES (?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO menu (name, meal_drink, cost) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, menu.getName());
             statement.setBoolean(2, menu.isMealOrDrink());
             statement.setDouble(3, menu.getCost());
             statement.executeUpdate();
+            ResultSet idRS = statement.getGeneratedKeys();
+            idRS.next();
+            menu.setId(idRS.getInt(1));
         } catch (SQLException e) {
             log.error("SQLException when CREATING MENU (" + menu.toString() + " stacktrace: ", e);
+            return null;
         }
+        return menu;
     }
 
     public List<Menu> readMenu() {
@@ -46,6 +53,7 @@ public class MenuDAO {
             }
         } catch (SQLException e) {
             log.error("SQLException when READING MENU, stacktrace: ", e);
+            return null;
         }
         return menus;
     }
@@ -64,27 +72,29 @@ public class MenuDAO {
 //        return name;
 //    }
 
-    public Menu getMenuItem(int menuId) {
+    public Optional<Menu> getMenuItem(int menuId) {
         try {
             String sql = "SELECT * FROM menu WHERE menu.id = " + menuId;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
-            return Menu.builder()
-                    .id(resultSet.getInt("id"))
-                    .name(resultSet.getString("name"))
-                    .mealOrDrink(resultSet.getBoolean("meal_drink"))
-                    .cost(resultSet.getDouble("cost"))
-                    .build();
+            return Optional.of(
+                    Menu.builder()
+                            .id(resultSet.getInt("id"))
+                            .name(resultSet.getString("name"))
+                            .mealOrDrink(resultSet.getBoolean("meal_drink"))
+                            .cost(resultSet.getDouble("cost"))
+                            .build()
+            );
         } catch (SQLException e) {
             log.error("SQLException when READING MENU with ID ("
                     + menuId
                     + ") stacktrace: ", e);
+            return Optional.empty();
         }
-        return null;
     }
 
-    public void updateMenu(Menu menu) {
+    public Menu updateMenu(Menu menu) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE menu SET name = ?, meal = ?, cost = ? WHERE id = ?");
             statement.setString(1, menu.getName());
@@ -96,18 +106,21 @@ public class MenuDAO {
             log.error("SQLException when READING MENU with ID ("
                     + menu.toString()
                     + "), stacktrace: ", e);
+            return null;
         }
+        return menu;
     }
 
-    public void deleteMenu(int menuId) {
+    public int deleteMenu(int menuId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM menu WHERE id = ?");
             statement.setInt(1, menuId);
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
             log.error("SQLException when DELETING MENU with ID"
                     + menuId
                     + "), stacktrace: ", e);
+            return -1;
         }
     }
 }

@@ -11,6 +11,7 @@ import com.restaurant.model.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class OrderService {
     private final OrderDAO orderDAO = new OrderDAO();
@@ -33,12 +34,16 @@ public class OrderService {
 
     private List<OrderDisplayDTO> toOrderDispleyDTOList(List<Order> orders) {
         List<OrderDisplayDTO> orderDisplay = new ArrayList<>();
-        for (Order order: orders) {
+        for (Order order : orders) {
             Menu orderedItem = menuDAO.getMenuItem(order.getMenuId());
+            Optional<String> clientName = clientDAO.getClientName(order.getClientId());
+            if (clientName.isEmpty()) {
+                //return Optional.empty();
+            }
             orderDisplay.add(
                     OrderDisplayDTO.builder()
                             .id(order.getId())
-                            .clientName(clientDAO.getClientName(order.getClientId()))
+                            .clientName(clientName.get())
                             .menuItemName(orderedItem.getName())
                             .amount(order.getAmount())
                             .cost(order.getAmount() * orderedItem.getCost())

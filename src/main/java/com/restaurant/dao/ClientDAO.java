@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class ClientDAO {
@@ -17,17 +18,19 @@ public class ClientDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public void createClient(Client client) {
+    public Optional<Client> createClient(Client client) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO clients (name) VALUES (?)");
             statement.setString(1, client.getName());
             statement.executeUpdate();
         } catch (SQLException e) {
             log.error("SQLException when CREATING CLIENT " + client.toString() + ", stacktrace: ", e);
+            return Optional.empty();
         }
+        return Optional.of(client);
     }
 
-    public List<Client> readClients() {
+    public Optional<List<Client>> readClients() {
         List<Client> clients = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
@@ -40,24 +43,29 @@ public class ClientDAO {
             }
         } catch (SQLException e) {
             log.error("SQLException when READING CLIENTS, stacktrace: ", e);
+            return Optional.empty();
         }
-        return clients;
+        return Optional.of(clients);
     }
 
-    public String getClientName(int clientId){
-        String name = "";
+    public Optional<String> getClientName(int clientId) {
         try {
+            String name = "";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + clientId);
             while (resultSet.next()) {
                 name = resultSet.getString("name");
             }
+            if (name.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(name);
         } catch (SQLException e) {
             log.error("SQLException when READING CLIENT with ID ("
                     + clientId
                     + "), stacktrace: ", e);
         }
-        return name;
+        return Optional.empty();
     }
 
     public void updateClient(Client client) {

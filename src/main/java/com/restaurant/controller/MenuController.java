@@ -21,18 +21,11 @@ public class MenuController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<MenuDTO> menu = menuService.getMenu();
         resp.setContentType("application/json");
-//        PrintWriter out = resp.getWriter();
-//        JSONArray jsonArray = new JSONArray();
-//
-//        for (Menu menuItem : menu) {
-//            JSONObject jsonMenuItem = new JSONObject();
-//            jsonMenuItem.put("id", menuItem.getId());
-//            jsonMenuItem.put("name", menuItem.getName());
-//            jsonMenuItem.put("meal", menuItem.isMealOrDrink());
-//            jsonMenuItem.put("cost", menuItem.getCost());
-//            jsonArray.put(jsonMenuItem);
-//        }
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(objectMapper.writeValueAsString(menu));
+        if(menu == null)
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(menu));
+        }
     }
 }

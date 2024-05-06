@@ -40,7 +40,6 @@ public class OrderController extends HttpServlet {
         resp.setContentType("application/json");
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.getWriter().write(objectMapper.writeValueAsString(orders));
-//        log.info("Parsed orders from DB");
     }
 
     @Override

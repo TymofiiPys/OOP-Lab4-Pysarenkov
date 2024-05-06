@@ -7,5 +7,5 @@ import java.sql.Connection;
 
 public class ClientService {
     private final Connection conn = RestaurantDBConnection.getConnection();
-    private final ClientDAO clientDAO = new ClientDAO(conn);
+    private final ClientDAO clientDAO = new ClientDAO();
 }
