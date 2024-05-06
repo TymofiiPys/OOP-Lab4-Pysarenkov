@@ -3,7 +3,7 @@ import axios from "axios";
 
 function Menu() {
 
-    const [order, setOrder] = useState({"client": 1});
+    const [order, setOrder] = useState([]);
     const [menuItems, setMenuItems] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
 
@@ -16,7 +16,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error fetching menu items:', error);
             });
-        axios.get('/api/orders?which=issued&clid=' + 1)
+        axios.get('/api/orders?which=ISSUED_FOR_PAYMENT&clid=' + 1)
             .then(response => {
                 setUnpaidOrders(response.data);
             })
@@ -36,10 +36,14 @@ function Menu() {
     }
     /* TODO: form json as an array of OrderReceiveDTOs */
     const handleAmountChange = (itemId, amount) => {
-        setOrder(prevOrder => ({
+        setOrder(prevOrder => ([
             ...prevOrder,
-            [itemId]: amount
-        }));
+            {
+                clientId: 1,
+                menuId: itemId,
+                amount: amount
+            }
+        ]));
     }
 
     // Handle form submission
@@ -52,7 +56,7 @@ function Menu() {
     }
     const handlePayment = () => {
         // Change order status to paid
-        axios.put('/api/orders', unpaidOrders)
+        axios.put('/api/orders?status=PAID', unpaidOrders.map(order => order.id))
             .then(response => {
                 console.log('Order updated successfully:', response.data);
             })
@@ -60,7 +64,7 @@ function Menu() {
                 console.error('Error placing order:', error);
             });
         // Create payment
-        axios.post('/api/payment', unpaidOrders)
+        axios.post('/api/payment', {clientId: 1, cost: totalUnpaidCost})
             .then(response => {
                 console.log('Payment created successfully:', response.data);
             })
@@ -110,7 +114,7 @@ function Menu() {
                 {menuItems.map(item => (
                     <tr key={item.id}>
                         <td>{item.name}</td>
-                        <td>{item.meal ? 'Meal' : 'Drink'}</td>
+                        <td>{item.mealOrDrink ? 'Meal' : 'Drink'}</td>
                         <td>${item.cost.toFixed(2)}</td>
                         <td>
                             <input

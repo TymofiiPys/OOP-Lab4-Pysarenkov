@@ -48,6 +48,7 @@ public class OrderService {
                             .clientName(clientName.get())
                             .menuItemName(orderedItem.get().getName())
                             .amount(order.getAmount())
+                            .status(order.getStatus())
                             .cost(order.getAmount() * orderedItem.get().getCost())
                             .build()
             );

@@ -1,5 +1,6 @@
 package com.restaurant.dto;
 
+import com.restaurant.model.Order;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,5 +11,6 @@ public class OrderDisplayDTO {
     private String clientName;
     private String menuItemName;
     private int amount;
+    private Order.StatusOrder status;
     private double cost;
 }

@@ -10,7 +10,13 @@ function Orders() {
         axios.get('/api/orders')
             .then(response => {
                 setOrders(response.data);
-                setUnpaidOrders(response.data.filter(order => order.status === 'ORDERED'));
+            })
+            .catch(error => {
+                console.error('Error fetching menu items:', error);
+            });
+        axios.get('/api/orders?which=ORDERED')
+            .then(response => {
+                setUnpaidOrders(response.data);
             })
             .catch(error => {
                 console.error('Error fetching menu items:', error);
@@ -18,9 +24,9 @@ function Orders() {
     }, []);
 
     const handleBillIssue = () => {
-        axios.put('/api/orders', unpaidOrders)
+        axios.put('/api/orders?status=ISSUED_FOR_PAYMENT', unpaidOrders.map(order => order.id))
             .then(response => {
-                console.log('Order updated successfully:', response.data);
+                console.log('Orders updated successfully:', response.data);
             })
             .catch(error => {
                 console.error('Error placing order:', error);
@@ -43,10 +49,11 @@ function Orders() {
             {orders.map(order => (
                 <tr key={order.id}>
                     <td>{order.id}</td>
-                    <td>{order.client_name}</td>
-                    <td>{order.menu_item}</td>
+                    <td>{order.clientName}</td>
+                    <td>{order.menuItemName}</td>
                     <td>{order.amount}</td>
                     <td>{order.status}</td>
+                    <td>${order.cost.toFixed(2)}</td>
                 </tr>
             ))}
             </tbody>
@@ -65,8 +72,8 @@ function Orders() {
                 <tbody>
                 {unpaidOrders.map(order => (
                     <tr key={order.id}>
-                        <td>{order.client_name}</td>
-                        <td>{order.menu_item}</td>
+                        <td>{order.clientName}</td>
+                        <td>{order.menuItemName}</td>
                         <td>{order.amount}</td>
                         <td>${order.cost.toFixed(2)}</td>
                     </tr>

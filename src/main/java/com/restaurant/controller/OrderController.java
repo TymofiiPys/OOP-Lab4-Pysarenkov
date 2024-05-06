@@ -25,7 +25,7 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<OrderDisplayDTO> orders = new ArrayList<>();
+        List<OrderDisplayDTO> orders;
         if (req.getParameter("which") == null)
             orders = orderService.getAllOrders();
         else {
