@@ -28,7 +28,12 @@ public class PaymentController extends HttpServlet {
                         PaymentDTO[].class
                 )
         );
-        paymentService.createPayment(payments);
-        resp.setStatus(HttpServletResponse.SC_OK);
+        PaymentDTO createdPayment = paymentService.createPayment(payments);
+        if(createdPayment == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(createdPayment));
+        }
     }
 }

@@ -161,22 +161,25 @@ public class OrderDAO {
     }
 
     @SneakyThrows
-    public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) {
+    public int updateOrderStatus(List<Integer> ids, Order.StatusOrder status) {
         if (status == null) {
-            return;
+            return -1;
         }
         try {
             connection.setAutoCommit(false);
             PreparedStatement statement = connection.prepareStatement("UPDATE orders SET status = ? WHERE id = ?");
+            int rows = 0;
             for (int id : ids) {
                 statement.setObject(1, status.name().toLowerCase(), Types.OTHER);
                 statement.setInt(2, id);
-                statement.executeUpdate();
+                rows += statement.executeUpdate();
             }
             connection.commit();
+            return rows;
         } catch (SQLException e) {
             connection.rollback();
             log.error("SQLException when UPDATING ORDERS with IDs (" + ids.toString() + ") to STATUS (" + status + ") stacktrace: ", e);
+            return -1;
         } finally {
             connection.setAutoCommit(true);
         }

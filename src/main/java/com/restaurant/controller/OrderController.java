@@ -1,6 +1,7 @@
 package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.model.Order;
@@ -36,10 +37,15 @@ public class OrderController extends HttpServlet {
                         Integer.parseInt(req.getParameter("clid"))
                 );
         }
-
-        resp.setContentType("application/json");
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(objectMapper.writeValueAsString(orders));
+        if(orders == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (orders.isEmpty()) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else {
+            resp.setContentType("application/json");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(orders));
+        }
     }
 
     @Override
@@ -50,9 +56,14 @@ public class OrderController extends HttpServlet {
                         OrderReceiveDTO[].class
                 )
         );
-        orderService.createOrders(orders);
-        resp.setStatus(HttpServletResponse.SC_OK);
-        //TODO : logs and responses
+        List<OrderDTO> createdOrders = orderService.createOrders(orders);
+        if(createdOrders == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(createdOrders));
+        }
     }
 
     @Override
@@ -64,7 +75,13 @@ public class OrderController extends HttpServlet {
                         Integer[].class
                 )
         );
-        orderService.updateOrderStatus(orderIdsToIssue, status);
-        resp.setStatus(HttpServletResponse.SC_OK);
+        int updatedRows = orderService.updateOrderStatus(orderIdsToIssue, status);
+        if(updatedRows < 0) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (updatedRows == 0) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+        }
     }
 }

@@ -77,15 +77,17 @@ public class MenuDAO {
             String sql = "SELECT * FROM menu WHERE menu.id = " + menuId;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return Optional.of(
-                    Menu.builder()
-                            .id(resultSet.getInt("id"))
-                            .name(resultSet.getString("name"))
-                            .mealOrDrink(resultSet.getBoolean("meal_drink"))
-                            .cost(resultSet.getDouble("cost"))
-                            .build()
-            );
+            if (resultSet.next())
+                return Optional.of(
+                        Menu.builder()
+                                .id(resultSet.getInt("id"))
+                                .name(resultSet.getString("name"))
+                                .mealOrDrink(resultSet.getBoolean("meal_drink"))
+                                .cost(resultSet.getDouble("cost"))
+                                .build()
+                );
+            else
+                return Optional.empty();
         } catch (SQLException e) {
             log.error("SQLException when READING MENU with ID ("
                     + menuId
