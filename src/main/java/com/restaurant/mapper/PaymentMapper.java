@@ -5,8 +5,10 @@ import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.dto.PaymentDTO;
 import com.restaurant.model.Order;
 import com.restaurant.model.Payment;
+import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+@Mapper
 public interface PaymentMapper {
     PaymentMapper INSTANCE = Mappers.getMapper(PaymentMapper.class);
 
