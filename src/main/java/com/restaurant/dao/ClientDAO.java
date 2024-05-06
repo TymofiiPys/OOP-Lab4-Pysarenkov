@@ -53,9 +53,9 @@ public class ClientDAO {
                 name = resultSet.getString("name");
             }
         } catch (SQLException e) {
-            log.error("SQLException when GETTING CLIENT'S ID ("
+            log.error("SQLException when READING CLIENT with ID ("
                     + clientId
-                    + ") check DB for existing of client with this id, stacktrace: ", e);
+                    + "), stacktrace: ", e);
         }
         return name;
     }
@@ -69,7 +69,7 @@ public class ClientDAO {
         } catch (SQLException e) {
             log.error("SQLException when UPDATING CLIENT ("
                     + client.toString()
-                    + ") check DB for existing of client with this id, stacktrace: ", e);
+                    + "), stacktrace: ", e);
         }
     }
 
@@ -79,9 +79,9 @@ public class ClientDAO {
             statement.setInt(1, clientId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            log.error("SQLException when DELETING CLIENT WITH ID"
+            log.error("SQLException when DELETING CLIENT with ID"
                     + clientId
-                    + ") check DB for existing of client with this id, stacktrace: ", e);
+                    + "), stacktrace: ", e);
         }
     }
 }

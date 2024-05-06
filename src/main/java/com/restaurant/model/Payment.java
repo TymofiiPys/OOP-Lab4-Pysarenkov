@@ -1,14 +1,12 @@
 package com.restaurant.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Data
 @Builder
+@ToString
 public class Payment {
     private int id;
     private int clientId;

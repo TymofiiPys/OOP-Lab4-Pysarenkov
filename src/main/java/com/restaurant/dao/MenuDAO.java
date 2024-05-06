@@ -2,11 +2,13 @@ package com.restaurant.dao;
 
 import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Menu;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class MenuDAO {
 
     private Connection connection;
@@ -24,7 +26,7 @@ public class MenuDAO {
             statement.setDouble(3, menu.getCost());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when CREATING MENU (" + menu.toString() + " stacktrace: ", e);
         }
     }
 
@@ -43,7 +45,7 @@ public class MenuDAO {
                 menus.add(menu);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING MENU, stacktrace: ", e);
         }
         return menus;
     }
@@ -62,9 +64,9 @@ public class MenuDAO {
 //        return name;
 //    }
 
-    public Menu getMenuItem(int id) {
+    public Menu getMenuItem(int menuId) {
         try {
-            String sql = "SELECT * FROM menu WHERE menu.id = " + id;
+            String sql = "SELECT * FROM menu WHERE menu.id = " + menuId;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
@@ -75,7 +77,9 @@ public class MenuDAO {
                     .cost(resultSet.getDouble("cost"))
                     .build();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING MENU with ID ("
+                    + menuId
+                    + ") stacktrace: ", e);
         }
         return null;
     }
@@ -89,7 +93,9 @@ public class MenuDAO {
             statement.setInt(4, menu.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING MENU with ID ("
+                    + menu.toString()
+                    + "), stacktrace: ", e);
         }
     }
 
@@ -99,7 +105,9 @@ public class MenuDAO {
             statement.setInt(1, menuId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when DELETING MENU with ID"
+                    + menuId
+                    + "), stacktrace: ", e);
         }
     }
 }

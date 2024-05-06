@@ -3,11 +3,14 @@ package com.restaurant.dao;
 import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.model.Order;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class OrderDAO {
 
     private Connection connection;
@@ -27,10 +30,11 @@ public class OrderDAO {
             statement.executeUpdate();
         } catch (SQLException e) {
             // TODO (everywhere): change e.printStackTrace() to log4j's log.error("Message", e)
-            e.printStackTrace();
+            log.error("SQLException when CREATING ORDER (" + order.toString() + " stacktrace: ", e);
         }
     }
 
+    @SneakyThrows
     public void createOrder(List<Order> orders) {
         try {
             connection.setAutoCommit(false);
@@ -48,7 +52,7 @@ public class OrderDAO {
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
-            e.printStackTrace();
+            log.error("SQLException when CREATING ORDERS (" + orders.toString() + " stacktrace: ", e);
         } finally {
             connection.setAutoCommit(true);
         }
@@ -102,7 +106,7 @@ public class OrderDAO {
                 orders.add(order);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING ORDERS with STATUS and ID stacktrace: ", e);
         }
         return orders;
     }
@@ -139,11 +143,12 @@ public class OrderDAO {
             resultSet.next();
             return resultSet.getInt("client_id");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("SQLException when READING ORDER with ID " + order.getId() + " stacktrace: ", e);
         }
         return -1;
     }
 
+    @SneakyThrows
     public void updateOrderStatus(List<Integer> ids, Order.StatusOrder status) {
         if (status == null) {
             return;
@@ -163,7 +168,7 @@ public class OrderDAO {
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
-            e.printStackTrace();
+            log.error("SQLException when UPDATING ORDERS with IDs (" + ids.toString() + ") to STATUS (" + status + ") stacktrace: ", e);
         } finally {
             connection.setAutoCommit(true);
         }
