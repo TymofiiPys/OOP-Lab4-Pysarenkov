@@ -12,7 +12,7 @@ import java.util.Optional;
 @Log4j2
 public class ClientDAO {
 
-    private Connection connection;
+    private final Connection connection;
 
     public ClientDAO() {
         this.connection = RestaurantDBConnection.getConnection();

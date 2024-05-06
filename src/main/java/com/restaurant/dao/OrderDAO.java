@@ -13,7 +13,7 @@ import java.util.List;
 @Log4j2
 public class OrderDAO {
 
-    private Connection connection;
+    private final Connection connection;
 
     // Constructor to initialize the database connection
     public OrderDAO() {

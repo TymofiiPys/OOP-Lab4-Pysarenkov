@@ -1,9 +1,7 @@
 package com.restaurant.service;
 
-import com.restaurant.dao.OrderDAO;
 import com.restaurant.dao.PaymentDAO;
 import com.restaurant.dto.PaymentDTO;
-import com.restaurant.mapper.OrderMapper;
 import com.restaurant.mapper.PaymentMapper;
 import com.restaurant.model.Payment;
 
@@ -13,8 +11,6 @@ import java.util.List;
 
 public class PaymentService {
     private final PaymentDAO paymentDAO = new PaymentDAO();
-    private final OrderDAO orderDAO = new OrderDAO();
-    private final OrderMapper orderMapper = OrderMapper.INSTANCE;
     private final PaymentMapper paymentMapper = PaymentMapper.INSTANCE;
 
     public PaymentDTO createPayment(List<PaymentDTO> payment) {

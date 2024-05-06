@@ -1,10 +1,8 @@
 package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.dto.PaymentDTO;
 import com.restaurant.service.PaymentService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +19,7 @@ public class PaymentController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<PaymentDTO> payments = Arrays.asList(
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),

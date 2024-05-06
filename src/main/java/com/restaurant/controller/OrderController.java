@@ -4,16 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
-import com.restaurant.model.Order;
 import com.restaurant.service.OrderService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +21,7 @@ public class OrderController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<OrderDisplayDTO> orders;
         if (req.getParameter("which") == null)
             orders = orderService.getAllOrders();
@@ -49,7 +46,7 @@ public class OrderController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<OrderReceiveDTO> orders = Arrays.asList(
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),
@@ -67,7 +64,7 @@ public class OrderController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<Integer> orderIdsToIssue = Arrays.asList(
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),

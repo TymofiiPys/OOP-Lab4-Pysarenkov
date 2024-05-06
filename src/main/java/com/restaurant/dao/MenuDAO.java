@@ -12,7 +12,7 @@ import java.util.Optional;
 @Log4j2
 public class MenuDAO {
 
-    private Connection connection;
+    private final Connection connection;
 
     // Constructor to initialize the database connection
     public MenuDAO() {

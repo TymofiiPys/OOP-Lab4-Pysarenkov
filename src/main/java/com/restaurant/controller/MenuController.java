@@ -3,7 +3,6 @@ package com.restaurant.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.MenuDTO;
 import com.restaurant.service.MenuService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +17,7 @@ public class MenuController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<MenuDTO> menu = menuService.getMenu();
         resp.setContentType("application/json");
         if(menu == null)

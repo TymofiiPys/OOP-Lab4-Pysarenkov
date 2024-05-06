@@ -9,7 +9,7 @@ import java.sql.*;
 
 @Log4j2
 public class PaymentDAO {
-    private Connection connection;
+    private final Connection connection;
 
     public PaymentDAO() {
         this.connection = RestaurantDBConnection.getConnection();
