@@ -68,14 +68,13 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Order.StatusOrder status = Order.StatusOrder.valueOf(req.getParameter("status"));
         List<Integer> orderIdsToIssue = Arrays.asList(
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),
                         Integer[].class
                 )
         );
-        int updatedRows = orderService.updateOrderStatus(orderIdsToIssue, status);
+        int updatedRows = orderService.updateOrderStatus(orderIdsToIssue, req.getParameter("status"));
         if(updatedRows < 0) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else if (updatedRows == 0) {

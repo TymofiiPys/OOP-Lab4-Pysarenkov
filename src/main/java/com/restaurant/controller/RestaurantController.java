@@ -129,16 +129,16 @@ public class RestaurantController extends HttpServlet {
         JSONArray jsonArray = new JSONArray();
 
         for (Order order : orders) {
-            JSONObject jsonMenuItem = new JSONObject();
-            Menu item = menuDAO.getMenuItem(order.getMenuId());
-            jsonMenuItem.put("id", order.getId());
-            jsonMenuItem.put("client_id", order.getClientId());
-            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
-            jsonMenuItem.put("menu_item", item.getName());
-            jsonMenuItem.put("amount", order.getAmount());
-            jsonMenuItem.put("status", order.getStatus().toString());
-            jsonMenuItem.put("cost", item.getCost());
-            jsonArray.put(jsonMenuItem);
+//            JSONObject jsonMenuItem = new JSONObject();
+//            Menu item = menuDAO.getMenuItem(order.getMenuId());
+//            jsonMenuItem.put("id", order.getId());
+//            jsonMenuItem.put("client_id", order.getClientId());
+//            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
+//            jsonMenuItem.put("menu_item", item.getName());
+//            jsonMenuItem.put("amount", order.getAmount());
+//            jsonMenuItem.put("status", order.getStatus().toString());
+//            jsonMenuItem.put("cost", item.getCost());
+//            jsonArray.put(jsonMenuItem);
         }
 
         response.setContentType("application/json");
@@ -158,13 +158,13 @@ public class RestaurantController extends HttpServlet {
             jsonMenuItem.put("id", order.getId());
             jsonMenuItem.put("client_id", clientId);
 //            jsonMenuItem.put("client_name", clientDAO.getClientName(order.getClientId()));
-            Menu item = menuDAO.getMenuItem(order.getMenuId());
-            jsonMenuItem.put("menu_item", item.getName());
-            jsonMenuItem.put("menu_id", order.getMenuId());
-            jsonMenuItem.put("amount", order.getAmount());
-            jsonMenuItem.put("status", order.getStatus().toString());
-            jsonMenuItem.put("cost", item.getCost());
-            jsonArray.put(jsonMenuItem);
+//            Menu item = menuDAO.getMenuItem(order.getMenuId());
+//            jsonMenuItem.put("menu_item", item.getName());
+//            jsonMenuItem.put("menu_id", order.getMenuId());
+//            jsonMenuItem.put("amount", order.getAmount());
+//            jsonMenuItem.put("status", order.getStatus().toString());
+//            jsonMenuItem.put("cost", item.getCost());
+//            jsonArray.put(jsonMenuItem);
         }
 
         response.setContentType("application/json");

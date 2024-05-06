@@ -24,15 +24,26 @@ public class OrderService {
         return toOrderDisplayDTOList(orderDAO.readOrders(null, null));
     }
 
-    public List<OrderDisplayDTO> getOrdersFilteredByStatus(String status) {
-        return toOrderDisplayDTOList(orderDAO.readOrders(Order.StatusOrder.valueOf(status), null));
+    public List<OrderDisplayDTO> getOrdersFilteredByStatus(String statusStr) {
+        Optional<Order.StatusOrder> status = checkStatus(statusStr);
+        if(status.isEmpty()) return null;
+        return toOrderDisplayDTOList(orderDAO.readOrders(status.get(), null));
     }
 
-    public List<OrderDisplayDTO> getOrdersFilteredByStatusAndId(String status, int clientId) {
-        return toOrderDisplayDTOList(orderDAO.readOrders(Order.StatusOrder.valueOf(status), clientId));
-
+    public List<OrderDisplayDTO> getOrdersFilteredByStatusAndId(String statusStr, int clientId) {
+        Optional<Order.StatusOrder> status = checkStatus(statusStr);
+        if(status.isEmpty()) return null;
+        return toOrderDisplayDTOList(orderDAO.readOrders(status.get(), clientId));
     }
 
+    private Optional<Order.StatusOrder> checkStatus(String statusStr) {
+        try {
+            Order.StatusOrder status = Order.StatusOrder.valueOf(statusStr);
+            return Optional.of(status);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
     private List<OrderDisplayDTO> toOrderDisplayDTOList(List<Order> orders) {
         if(orders == null) return null;
         List<OrderDisplayDTO> orderDisplay = new ArrayList<>();
@@ -64,7 +75,9 @@ public class OrderService {
         return createdOrders.stream().map(mapper::toOrderDTO).toList();
     }
 
-    public int updateOrderStatus(List<Integer> orderIds, Order.StatusOrder status) {
-        return orderDAO.updateOrderStatus(orderIds, status);
+    public int updateOrderStatus(List<Integer> orderIds, String statusStr) {
+        Optional<Order.StatusOrder> status = checkStatus(statusStr);
+        if(status.isEmpty()) return -1;
+        return orderDAO.updateOrderStatus(orderIds, status.get());
     }
 }

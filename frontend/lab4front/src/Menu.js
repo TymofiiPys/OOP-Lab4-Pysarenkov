@@ -74,8 +74,7 @@ function Menu() {
     }
 
     const totalUnpaidCost = unpaidOrders.reduce((total, order) => {
-        const menuItem = menuItems.find(item => item.id === order.menu_id);
-        return total + menuItem.cost * order.amount;
+        return total + order.cost;
     }, 0);
 
     // return (<table>

@@ -93,17 +93,19 @@ public class OrderDAO {
     public List<Order> readOrders(Order.StatusOrder status, Integer clientId) {
         List<Order> orders = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT * FROM orders ORDER BY orders.id");
+            StringBuilder sql = new StringBuilder("SELECT * FROM orders");
             if (status != null) {
                 sql
-                        .append("WHERE status = ")
-                        .append(status.name().toLowerCase());
+                        .append(" WHERE orders.status = '")
+                        .append(status.name().toLowerCase())
+                        .append("'");
             }
             if (clientId != null) {
                 sql
-                        .append("WHERE orders.client_id = ")
+                        .append(" AND orders.client_id = ")
                         .append(clientId);
             }
+            sql.append(" ORDER BY orders.id");
             PreparedStatement statement = connection.prepareStatement(sql.toString());
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
