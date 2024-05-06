@@ -141,7 +141,7 @@ function Menu() {
                     <tbody>
                     {unpaidOrders.map(order => (
                         <tr key={order.id}>
-                            <td>{order.menu_item}</td>
+                            <td>{order.menuItemName}</td>
                             <td>{order.amount}</td>
                             <td>${order.cost.toFixed(2)}</td>
                         </tr>
