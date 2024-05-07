@@ -1,8 +1,11 @@
 package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restaurant.dto.PaymentDTO;
+import com.restaurant.dto.MenuDTO;
+import com.restaurant.dto.PaymentCreateDTO;
+import com.restaurant.dto.PaymentDisplayDTO;
 import com.restaurant.service.PaymentService;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,14 +22,27 @@ public class PaymentController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<PaymentDisplayDTO> payments = paymentService.getAllPayments();
+        resp.setContentType("application/json");
+        if (payments == null)
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(payments));
+        }
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<PaymentDTO> payments = Arrays.asList(
+        List<PaymentCreateDTO> payments = Arrays.asList(
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),
-                        PaymentDTO[].class
+                        PaymentCreateDTO[].class
                 )
         );
-        PaymentDTO createdPayment = paymentService.createPayment(payments);
+        PaymentCreateDTO createdPayment = paymentService.createPayment(payments);
+        resp.setContentType("application/json");
         if(createdPayment == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
