@@ -96,21 +96,20 @@ public class MenuDAO {
         }
     }
 
-    public Menu updateMenu(Menu menu) {
+    public int updateMenu(Menu menu) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE menu SET name = ?, meal = ?, cost = ? WHERE id = ?");
             statement.setString(1, menu.getName());
             statement.setBoolean(2, menu.isMealOrDrink());
             statement.setDouble(3, menu.getCost());
             statement.setInt(4, menu.getId());
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
             log.error("SQLException when READING MENU with ID ("
                     + menu.toString()
                     + "), stacktrace: ", e);
-            return null;
+            return -1;
         }
-        return menu;
     }
 
     public int deleteMenu(int menuId) {

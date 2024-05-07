@@ -26,7 +26,7 @@ public class MenuController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<MenuDTO> menu = menuService.getMenu();
         resp.setContentType("application/json");
-        if(menu == null)
+        if (menu == null)
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         else {
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -36,27 +36,29 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<MenuCreateDTO> menuCreateDTOS = Arrays.asList(
-                objectMapper.readValue(
-                        req.getReader().lines().collect(Collectors.joining()),
-                        MenuCreateDTO[].class
-                )
+        MenuCreateDTO menuToCreate = objectMapper.readValue(
+                req.getReader().lines().collect(Collectors.joining()),
+                MenuCreateDTO.class
         );
-        List<MenuDTO> createdMenus = menuService.createMenu(menuCreateDTOS);
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(objectMapper.writeValueAsString(createdMenus));
+        MenuDTO createdMenu = menuService.createMenu(menuToCreate);
+        if (createdMenu == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(createdMenu));
+        }
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<MenuDTO> menuToUpdate = Arrays.asList(
-                objectMapper.readValue(
-                        req.getReader().lines().collect(Collectors.joining()),
-                        MenuDTO[].class
-                )
+        MenuDTO menuToUpdate = objectMapper.readValue(
+                req.getReader().lines().collect(Collectors.joining()),
+                MenuDTO.class
         );
-        List<MenuDTO> updatedMenu = menuService.updateMenu(menuToUpdate);
-        if (updatedMenu.isEmpty()) {
+        int updatedRows = menuService.updateMenu(menuToUpdate);
+        if (updatedRows < 0) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (updatedRows == 0) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -65,6 +67,17 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        int menuIdToDelete = objectMapper.readValue(
+                req.getReader().lines().collect(Collectors.joining()),
+                Integer.class
+        );
+        int deletedRows = menuService.deleteMenu(menuIdToDelete);
+        if (deletedRows < 0) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (deletedRows == 0) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+        }
     }
 }
