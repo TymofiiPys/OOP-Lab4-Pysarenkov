@@ -3,13 +3,21 @@ import './App.css';
 import Menu from "./Menu";
 import Orders from "./Orders";
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import LoginButton from "./Login";
+import {useAuth0} from "@auth0/auth0-react";
 
 
 function App() {
+    const { isAuthenticated, loginWithRedirect } = useAuth0();
+
+    if(!isAuthenticated) {
+        loginWithRedirect();
+    }
     return (
         <Router basename={process.env.PUBLIC_URL}>
             <div>
                 <h1>Restaurant System</h1>
+               <LoginButton/>
             </div>
             <Routes>
                 <Route exact path="/" element={<Menu/>}/>
