@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 
-@WebFilter(asyncSupported = true, urlPatterns = {"/"})
+@WebFilter(asyncSupported = true, urlPatterns = {"/*"})
 public class JWTFilter implements Filter {
 
     @Override
@@ -24,9 +24,9 @@ public class JWTFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String token = request.getHeader("access-token");
-        Algorithm algorithm = Algorithm.HMAC256("baeldung");
+        Algorithm algorithm = Algorithm.HMAC256("secretlysecret");
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("Baeldung")
+                .withIssuer("IMBARESTAURANT")
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
         String id = decodedJWT.getClaim("id").asString();

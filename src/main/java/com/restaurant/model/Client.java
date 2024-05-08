@@ -9,8 +9,6 @@ import lombok.ToString;
 @ToString
 public class Client {
     private int id;
-    private String name;
     private String email;
-    private Role role;
-    public enum Role {ADMIN, VISITOR};
+    private boolean isAdmin;
 }

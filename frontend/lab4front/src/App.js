@@ -1,9 +1,9 @@
 import React from "react";
 import './App.css';
-import Menu from "./Menu";
-import Orders from "./Orders";
+import Menu from "./components/Menu";
+import Orders from "./components/Orders";
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import LoginButton from "./Login";
+import LoginButton from "./components/Login";
 import {useAuth0} from "@auth0/auth0-react";
 
 

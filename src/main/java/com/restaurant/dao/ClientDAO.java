@@ -3,6 +3,7 @@ package com.restaurant.dao;
 import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Client;
 import lombok.extern.log4j.Log4j2;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,10 +19,15 @@ public class ClientDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public Optional<Client> createClient(Client client) {
+    public Optional<Client> createClient(Client client, String password) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO clients (name) VALUES (?)");
-            statement.setString(1, client.getName());
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO clients (email, password, salt, is_admin) VALUES (?, ?, ?, ?)");
+            statement.setString(1, client.getEmail());
+            String salt = BCrypt.gensalt();
+            String hash = BCrypt.hashpw(password, salt);
+            statement.setString(2, hash);
+            statement.setString(3, salt);
+            statement.setBoolean(4, client.isAdmin());
             statement.executeUpdate();
         } catch (SQLException e) {
             log.error("SQLException when CREATING CLIENT " + client.toString() + ", stacktrace: ", e);
