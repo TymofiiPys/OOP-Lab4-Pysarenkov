@@ -29,15 +29,13 @@ public class JWTFilter implements Filter {
                 .withIssuer("IMBARESTAURANT")
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        String id = decodedJWT.getClaim("id").asString();
-        String name = decodedJWT.getClaim("name").asString();
+        int id = decodedJWT.getClaim("id").asInt();
         String email = decodedJWT.getClaim("email").asString();
-        String role = decodedJWT.getClaim("role").asString();
+        boolean isAdmin = decodedJWT.getClaim("isAdmin").asBoolean();
         Client client = Client.builder()
-                .id(Integer.parseInt(id))
-                .name(name)
+                .id(id)
                 .email(email)
-                .role(Client.Role.valueOf(role))
+                .isAdmin(isAdmin)
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String clientJSON = objectMapper.writeValueAsString(client);

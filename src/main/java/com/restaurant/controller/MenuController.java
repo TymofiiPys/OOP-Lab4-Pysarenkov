@@ -36,6 +36,8 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String token = req.getHeader("access-token");
+
         MenuCreateDTO menuToCreate = objectMapper.readValue(
                 req.getReader().lines().collect(Collectors.joining()),
                 MenuCreateDTO.class

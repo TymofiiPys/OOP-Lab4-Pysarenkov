@@ -23,19 +23,31 @@ public class ClientController extends HttpServlet {
                 req.getReader().lines().collect(Collectors.joining()),
                 LoginDTO.class
         );
-        if(loginDTO.getEmail() == null || loginDTO.getPassword() == null){
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-        AuthToken token = clientService.authenticate(loginDTO);
-        if(token.getStatus() < 0) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } else if (token.getStatus() == 1) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        String signup = req.getParameter("signup");
+        if (signup != null){
+            AuthToken token = clientService.signup(loginDTO);
+            if (token.getStatus() < 0) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } else {
+                resp.setContentType("application/json");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write(objectMapper.writeValueAsString(token));
+            }
         } else {
-            resp.setContentType("application/json");
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().write(objectMapper.writeValueAsString(token));
+            if (loginDTO.getEmail() == null || loginDTO.getPassword() == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            AuthToken token = clientService.authenticate(loginDTO);
+            if (token.getStatus() < 0) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else if (token.getStatus() == 1) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            } else {
+                resp.setContentType("application/json");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write(objectMapper.writeValueAsString(token));
+            }
         }
     }
 }

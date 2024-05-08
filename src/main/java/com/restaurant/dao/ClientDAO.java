@@ -81,12 +81,11 @@ public class ClientDAO {
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Client client = Client.builder()
+                return Client.builder()
                         .id(resultSet.getInt("id"))
                         .email(email)
                         .isAdmin(resultSet.getBoolean("is_admin"))
                         .build();
-                return client;
             }
         } catch (SQLException e) {
             log.error("SQLException when READING CLIENT with EMAIL ("

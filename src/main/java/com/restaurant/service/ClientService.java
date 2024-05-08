@@ -10,6 +10,8 @@ import com.restaurant.model.Client;
 import com.restaurant.model.Password;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Date;
+
 public class ClientService {
     private final ClientDAO clientDAO = new ClientDAO();
 
@@ -25,14 +27,32 @@ public class ClientService {
         }
 
         Algorithm algorithm = Algorithm.HMAC256("secretlysecret");
-        JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("IMBARESTAURANT")
-                .build();
         String jwt = JWT.create()
                 .withIssuer("IMBARESTAURANT")
                 .withClaim("id", clientToAuth.getId())
                 .withClaim("email", clientToAuth.getEmail())
                 .withClaim("isAdmin", clientToAuth.isAdmin())
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000L))
+                .sign(algorithm);
+        return new AuthToken(0, jwt);
+    }
+
+    public AuthToken signup(LoginDTO loginDTO) {
+        Client createdClient = clientDAO.createClient(Client.builder().email(loginDTO.getEmail()).isAdmin(true).build(),
+                loginDTO.getPassword());
+        if (createdClient == null) {
+            return new AuthToken(-1, "");
+        }
+
+        Algorithm algorithm = Algorithm.HMAC256("secretlysecret");
+        String jwt = JWT.create()
+                .withIssuer("IMBARESTAURANT")
+                .withClaim("id", createdClient.getId())
+                .withClaim("email", createdClient.getEmail())
+                .withClaim("isAdmin", createdClient.isAdmin())
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000L))
                 .sign(algorithm);
         return new AuthToken(0, jwt);
     }
