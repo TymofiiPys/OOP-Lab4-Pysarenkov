@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.MenuDTO;
 import com.restaurant.dto.PaymentCreateDTO;
 import com.restaurant.dto.PaymentDisplayDTO;
+import com.restaurant.model.Client;
 import com.restaurant.service.PaymentService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,6 +24,13 @@ public class PaymentController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Client client = objectMapper.readValue(
+                req.getAttribute("client").toString(),
+                Client.class
+        );
+        if(!client.isAdmin()) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
         List<PaymentDisplayDTO> payments = paymentService.getAllPayments();
         resp.setContentType("application/json");
         if (payments == null)

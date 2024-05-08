@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.MenuCreateDTO;
 import com.restaurant.dto.MenuDTO;
 import com.restaurant.dto.OrderReceiveDTO;
+import com.restaurant.model.Client;
 import com.restaurant.model.Menu;
 import com.restaurant.service.MenuService;
 import jakarta.servlet.ServletException;
@@ -36,8 +37,13 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String token = req.getHeader("access-token");
-
+        Client client = objectMapper.readValue(
+                req.getAttribute("client").toString(),
+                Client.class
+        );
+        if(!client.isAdmin()) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
         MenuCreateDTO menuToCreate = objectMapper.readValue(
                 req.getReader().lines().collect(Collectors.joining()),
                 MenuCreateDTO.class
@@ -53,6 +59,13 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Client client = objectMapper.readValue(
+                req.getAttribute("client").toString(),
+                Client.class
+        );
+        if(!client.isAdmin()) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
         MenuDTO menuToUpdate = objectMapper.readValue(
                 req.getReader().lines().collect(Collectors.joining()),
                 MenuDTO.class
@@ -69,6 +82,13 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Client client = objectMapper.readValue(
+                req.getAttribute("client").toString(),
+                Client.class
+        );
+        if(!client.isAdmin()) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
         int menuIdToDelete = objectMapper.readValue(
                 req.getReader().lines().collect(Collectors.joining()),
                 Integer.class

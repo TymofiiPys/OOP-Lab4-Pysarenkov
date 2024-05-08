@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
+import com.restaurant.model.Client;
 import com.restaurant.service.OrderService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -71,6 +72,15 @@ public class OrderController extends HttpServlet {
                         Integer[].class
                 )
         );
+        if(req.getParameter("status").equals("ISSUED_FOR_PAYMENT")) {
+            Client client = objectMapper.readValue(
+                    req.getAttribute("client").toString(),
+                    Client.class
+            );
+            if(!client.isAdmin()) {
+                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        }
         int updatedRows = orderService.updateOrderStatus(orderIdsToIssue, req.getParameter("status"));
         if(updatedRows < 0) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
