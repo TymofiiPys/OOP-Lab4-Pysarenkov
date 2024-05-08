@@ -49,7 +49,7 @@ public class OrderService {
         List<OrderDisplayDTO> orderDisplay = new ArrayList<>();
         for (Order order : orders) {
             Optional<Menu> orderedItem = menuDAO.getMenuItem(order.getMenuId());
-            Optional<String> clientName = clientDAO.getClientName(order.getClientId());
+            Optional<String> clientName = clientDAO.getClientEmail(order.getClientId());
             if(orderedItem.isEmpty() || clientName.isEmpty()) {
                 continue;
             }

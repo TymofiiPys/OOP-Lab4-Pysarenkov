@@ -2,6 +2,7 @@ package com.restaurant.dao;
 
 import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Client;
+import com.restaurant.model.Password;
 import lombok.extern.log4j.Log4j2;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -19,7 +20,7 @@ public class ClientDAO {
         this.connection = RestaurantDBConnection.getConnection();
     }
 
-    public Optional<Client> createClient(Client client, String password) {
+    public Client createClient(Client client, String password) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO clients (email, password, salt, is_admin) VALUES (?, ?, ?, ?)");
             statement.setString(1, client.getEmail());
@@ -31,12 +32,12 @@ public class ClientDAO {
             statement.executeUpdate();
         } catch (SQLException e) {
             log.error("SQLException when CREATING CLIENT " + client.toString() + ", stacktrace: ", e);
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(client);
+        return client;
     }
 
-    public Optional<List<Client>> readClients() {
+    public List<Client> readClients() {
         List<Client> clients = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
@@ -44,23 +45,23 @@ public class ClientDAO {
             while (resultSet.next()) {
                 Client client = Client.builder().build();
                 client.setId(resultSet.getInt("id"));
-                client.setName(resultSet.getString("name"));
+                client.setEmail(resultSet.getString("email"));
                 clients.add(client);
             }
         } catch (SQLException e) {
             log.error("SQLException when READING CLIENTS, stacktrace: ", e);
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(clients);
+        return clients;
     }
 
-    public Optional<String> getClientName(int clientId) {
+    public Optional<String> getClientEmail(int clientId) {
         try {
             String name = "";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + clientId);
             while (resultSet.next()) {
-                name = resultSet.getString("name");
+                name = resultSet.getString("email");
             }
             if (name.isEmpty()) {
                 return Optional.empty();
@@ -74,10 +75,31 @@ public class ClientDAO {
         return Optional.empty();
     }
 
+    public Client readByEmail(String email) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM clients WHERE email = ?");
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Client client = Client.builder()
+                        .id(resultSet.getInt("id"))
+                        .email(email)
+                        .isAdmin(resultSet.getBoolean("is_admin"))
+                        .build();
+                return client;
+            }
+        } catch (SQLException e) {
+            log.error("SQLException when READING CLIENT with EMAIL ("
+                    + email
+                    + "), stacktrace: ", e);
+        }
+        return null;
+    }
+
     public void updateClient(Client client) {
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE clients SET name = ? WHERE id = ?");
-            statement.setString(1, client.getName());
+            PreparedStatement statement = connection.prepareStatement("UPDATE clients SET email = ? WHERE id = ?");
+            statement.setString(1, client.getEmail());
             statement.setInt(2, client.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -97,5 +119,25 @@ public class ClientDAO {
                     + clientId
                     + "), stacktrace: ", e);
         }
+    }
+
+    public Password getPassword(int clientId) {
+        try {
+            String sql = "SELECT password, salt FROM clients WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, clientId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Password.builder()
+                        .hash(resultSet.getString("password"))
+                        .salt(resultSet.getString("salt"))
+                        .build();
+            }
+        } catch (SQLException e) {
+            log.error("SQLException when READING PASSWORD of CLIENT with ID"
+                    + clientId
+                    + "), stacktrace: ", e);
+        }
+        return null;
     }
 }

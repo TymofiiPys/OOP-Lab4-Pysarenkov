@@ -5,7 +5,6 @@ import com.restaurant.dao.PaymentDAO;
 import com.restaurant.dto.PaymentCreateDTO;
 import com.restaurant.dto.PaymentDisplayDTO;
 import com.restaurant.mapper.PaymentMapper;
-import com.restaurant.model.Client;
 import com.restaurant.model.Payment;
 
 import java.sql.Timestamp;
@@ -32,7 +31,7 @@ public class PaymentService {
         List<Payment> payments = paymentDAO.readPayment();
         List<PaymentDisplayDTO> paymentsToDisplay = payments.stream().map(mapper::toPaymentDisplayDTO).toList();
         for (var payment : paymentsToDisplay) {
-            payment.setClientName(clientDAO.getClientName(payment.getClientId()).orElse(""));
+            payment.setClientName(clientDAO.getClientEmail(payment.getClientId()).orElse(""));
         }
         return paymentsToDisplay;
     }

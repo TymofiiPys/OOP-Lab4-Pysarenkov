@@ -1,50 +1,39 @@
 package com.restaurant.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.restaurant.dao.ClientDAO;
+import com.restaurant.dto.AuthToken;
 import com.restaurant.dto.LoginDTO;
+import com.restaurant.model.Client;
+import com.restaurant.model.Password;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class ClientService {
     private final ClientDAO clientDAO = new ClientDAO();
 
-    public boolean authenticate(LoginDTO loginDTO) {
-        DaoManager mgr = new DaoManager();
-        Connection conn = mgr.getConnection();
-        UserDao dao = new UserDao(conn);
-        User user = null;
-        Password pass = null;
-        try {
-            user = (User) dao.readByEmail(email);
-            if(user == null){
-                throw new Exception();
-            }
-            pass = dao.getPassword(user.getId());
-            String hashedPass = BCrypt.hashpw(pwd, pass.getSalt());
-            if(!hashedPass.equals(pass.getPassword())){
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            resp.getWriter().println("[]");
-            return;
+    public AuthToken authenticate(LoginDTO loginDTO) {
+        Client clientToAuth = clientDAO.readByEmail(loginDTO.getEmail());
+        if (clientToAuth == null) {
+            return new AuthToken(-1, "");
+        }
+        Password password = clientDAO.getPassword(clientToAuth.getId());
+        String hashedPwdLogin = BCrypt.hashpw(loginDTO.getPassword(), password.getSalt());
+        if(!hashedPwdLogin.equals(password.getHash())) {
+            return new AuthToken(1, "");
         }
 
-        Algorithm algorithm = Algorithm.HMAC256("baeldung");
+        Algorithm algorithm = Algorithm.HMAC256("secretlysecret");
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("Baeldung")
+                .withIssuer("IMBARESTAURANT")
                 .build();
         String jwt = JWT.create()
-                .withIssuer("Baeldung")
-                .withClaim("id", user.getId())
-                .withClaim("login", user.getLogin())
-                .withClaim("email", user.getEmail())
-                .withClaim("role", user.getRole())
+                .withIssuer("IMBARESTAURANT")
+                .withClaim("id", clientToAuth.getId())
+                .withClaim("email", clientToAuth.getEmail())
+                .withClaim("isAdmin", clientToAuth.isAdmin())
                 .sign(algorithm);
-
-        Token token = new Token(jwt);
-        try {
-            String userJson = JsonParser.toJsonObject(token);
-            resp.getWriter().println(userJson);
-        } catch (Exception e) {
-            resp.getWriter().println("[]");
-        }
+        return new AuthToken(0, jwt);
     }
 }
