@@ -39,7 +39,7 @@ public class ClientService {
     }
 
     public AuthToken signup(LoginDTO loginDTO) {
-        Client createdClient = clientDAO.createClient(Client.builder().email(loginDTO.getEmail()).isAdmin(true).build(),
+        Client createdClient = clientDAO.createClient(Client.builder().email(loginDTO.getEmail()).isAdmin(false).build(),
                 loginDTO.getPassword());
         if (createdClient == null) {
             return new AuthToken(-1, "");

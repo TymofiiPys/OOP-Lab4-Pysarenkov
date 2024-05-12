@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 
-@WebFilter(asyncSupported = true, urlPatterns = {"/*"})
+@WebFilter(asyncSupported = true, urlPatterns = {"/menu", "/orders", "/payment"})
 public class JWTFilter implements Filter {
 
     @Override
