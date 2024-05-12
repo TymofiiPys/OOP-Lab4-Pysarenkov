@@ -9,8 +9,10 @@ import com.restaurant.model.Client;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Date;
 
 
 @WebFilter(asyncSupported = true, urlPatterns = {"/menu", "/orders", "/payment"})
@@ -29,6 +31,10 @@ public class JWTFilter implements Filter {
                 .withIssuer("IMBARESTAURANT")
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
+        if (decodedJWT.getExpiresAt().before(new Date())) {
+            ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
         int id = decodedJWT.getClaim("id").asInt();
         String email = decodedJWT.getClaim("email").asString();
         boolean isAdmin = decodedJWT.getClaim("isAdmin").asBoolean();
