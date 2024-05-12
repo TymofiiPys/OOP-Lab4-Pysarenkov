@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 
 const AuthContext = createContext({});
 
-function AuthProvider ({children}) {
+export function AuthProvider ({children}) {
     const [auth, setAuth] = useState({});
 
     return (
@@ -12,4 +12,4 @@ function AuthProvider ({children}) {
     )
 }
 
-export default AuthContext
+export default AuthContext;
