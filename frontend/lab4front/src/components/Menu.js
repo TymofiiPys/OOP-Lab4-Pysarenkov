@@ -1,22 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import config from "./config/Config";
+import getHeaderConfig from "./config/Config";
 
 function Menu() {
 
     const [order, setOrder] = useState([]);
     const [menuItems, setMenuItems] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
-
+    const config = getHeaderConfig();
     useEffect(() => {
         // Fetch menu items from backend servlet API
-        axios.get('/api/menu')
+        axios.get('/api/menu', {headers: config.headers})
             .then(response => {
                 setMenuItems(response.data);
             })
             .catch(error => {
                 console.error('Error fetching menu items:', error);
             });
-        axios.get('/api/orders?which=ISSUED_FOR_PAYMENT&clid=' + 1)
+        axios.get('/api/orders?which=ISSUED_FOR_PAYMENT&clid=' + 1, {headers: config.headers})
             .then(response => {
                 setUnpaidOrders(response.data);
             })
@@ -26,7 +28,10 @@ function Menu() {
     }, []);
 
     const handleSubmitOrder = (orderData) => {
-        axios.post('/api/orders', orderData)
+        axios.post('/api/orders', {
+            data: orderData,
+            headers: config.headers
+        })
             .then(response => {
                 console.log('Order placed successfully:', response.data);
             })
@@ -35,6 +40,7 @@ function Menu() {
             });
     }
     /* TODO: form json as an array of OrderReceiveDTOs */
+    /* TODO: ignore clientId and return to previous stuff due to clientId being sent as JWT */
     const handleAmountChange = (itemId, amount) => {
         setOrder(prevOrder => ([
             ...prevOrder,
@@ -56,7 +62,10 @@ function Menu() {
     }
     const handlePayment = () => {
         // Change order status to paid
-        axios.put('/api/orders?status=PAID', unpaidOrders.map(order => order.id))
+        axios.put('/api/orders?status=PAID', {
+            data: unpaidOrders.map(order => order.id),
+            headers: config.headers
+        })
             .then(response => {
                 console.log('Order updated successfully:', response.data);
             })
@@ -77,26 +86,6 @@ function Menu() {
         return total + order.cost;
     }, 0);
 
-    // return (<table>
-    //     <thead>
-    //     <tr>
-    //         <th>ID</th>
-    //         <th>Name</th>
-    //         <th>Type</th>
-    //         <th>Cost</th>
-    //     </tr>
-    //     </thead>
-    //     <tbody>
-    //     {this.props.passedMenuItems.map(item => (
-    //         <tr key={item.id}>
-    //             <td>{item.id}</td>
-    //             <td>{item.name}</td>
-    //             <td>{item.meal ? 'Meal' : 'Drink'}</td>
-    //             <td>{item.cost}</td>
-    //         </tr>
-    //     ))}
-    //     </tbody>
-    // </table>);
     return (<div>
         <h2>Order Form</h2>
         <form onSubmit={handleSubmit}>
@@ -118,7 +107,7 @@ function Menu() {
                         <td>
                             <input
                                 type="number"
-                                value={order[item.id] || 0}
+                                value={order.find(order => order.menuId === item.id)?.amount || 0}
                                 onChange={(e) => handleAmountChange(item.id, parseInt(e.target.value))}
                                 min={0}
                             />
