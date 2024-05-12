@@ -3,9 +3,7 @@ package com.restaurant.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.dto.MenuCreateDTO;
 import com.restaurant.dto.MenuDTO;
-import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.model.Client;
-import com.restaurant.model.Menu;
 import com.restaurant.service.MenuService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,7 +1,6 @@
 package com.restaurant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restaurant.dto.MenuDTO;
 import com.restaurant.dto.PaymentCreateDTO;
 import com.restaurant.dto.PaymentDisplayDTO;
 import com.restaurant.model.Client;

@@ -5,7 +5,7 @@ import getHeaderConfig from "./config/Config";
 
 function Menu() {
 
-    const [order, setOrder] = useState([]);
+    const [order, setOrder] = useState({});
     const [menuItems, setMenuItems] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
     const config = getHeaderConfig();
@@ -28,10 +28,7 @@ function Menu() {
     }, []);
 
     const handleSubmitOrder = (orderData) => {
-        axios.post('/api/orders', {
-            data: orderData,
-            headers: config.headers
-        })
+        axios.post('/api/orders', orderData, {headers: config.headers})
             .then(response => {
                 console.log('Order placed successfully:', response.data);
             })
@@ -39,17 +36,13 @@ function Menu() {
                 console.error('Error placing order:', error);
             });
     }
-    /* TODO: form json as an array of OrderReceiveDTOs */
-    /* TODO: ignore clientId and return to previous stuff due to clientId being sent as JWT */
     const handleAmountChange = (itemId, amount) => {
-        setOrder(prevOrder => ([
+        console.log(itemId, amount);
+        console.log(JSON.stringify(order))
+        setOrder(prevOrder => ({
             ...prevOrder,
-            {
-                clientId: 1,
-                menuId: itemId,
-                amount: amount
-            }
-        ]));
+            [itemId]: amount
+        }))
     }
 
     // Handle form submission
@@ -87,61 +80,64 @@ function Menu() {
     }, 0);
 
     return (<div>
-        <h2>Order Form</h2>
-        <form onSubmit={handleSubmit}>
-            <table>
-                <thead>
-                <tr>
-                    <th>Menu Item</th>
-                    <th>Type</th>
-                    <th>Cost</th>
-                    <th>Amount</th>
-                </tr>
-                </thead>
-                <tbody>
-                {menuItems.map(item => (
-                    <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{item.mealOrDrink ? 'Meal' : 'Drink'}</td>
-                        <td>${item.cost.toFixed(2)}</td>
-                        <td>
-                            <input
-                                type="number"
-                                value={order.find(order => order.menuId === item.id)?.amount || 0}
-                                onChange={(e) => handleAmountChange(item.id, parseInt(e.target.value))}
-                                min={0}
-                            />
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <button type="submit">Place Order</button>
-            <div>
-                <h2>Unpaid Orders</h2>
+            <h2>Order Form</h2>
+            <form onSubmit={handleSubmit}>
                 <table>
                     <thead>
                     <tr>
                         <th>Menu Item</th>
+                        <th>Type</th>
+                        <th>Cost</th>
                         <th>Amount</th>
-                        <th>Cost Per One Item</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {unpaidOrders.map(order => (
-                        <tr key={order.id}>
-                            <td>{order.menuItemName}</td>
-                            <td>{order.amount}</td>
-                            <td>${order.cost.toFixed(2)}</td>
+                    {menuItems.map(item => (
+                        <tr key={item.id}>
+                            <td>{item.name}</td>
+                            <td>{item.mealOrDrink ? 'Meal' : 'Drink'}</td>
+                            <td>${item.cost.toFixed(2)}</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    value={order[item.id] || 0}
+                                    onChange={(e) => handleAmountChange(item.id, parseInt(e.target.value))}
+                                    min={0}
+                                />
+                            </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
-                <h1>Total: ${totalUnpaidCost.toFixed(2)}</h1>
-                <button onClick={handlePayment}>Pay</button>
-            </div>
-        </form>
-    </div>);
+                <button type="submit">Place Order</button>
+            </form>
+            <form onSubmit={handlePayment}>
+                <div>
+                    <h2>Unpaid Orders</h2>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Menu Item</th>
+                            <th>Amount</th>
+                            <th>Cost Per One Item</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {unpaidOrders.map(order => (
+                            <tr key={order.id}>
+                                <td>{order.menuItemName}</td>
+                                <td>{order.amount}</td>
+                                <td>${order.cost.toFixed(2)}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    <h1>Total: ${totalUnpaidCost.toFixed(2)}</h1>
+                    <button type="submit">Pay</button>
+                </div>
+            </form>
+        </div>
+    );
 }
 
 export default Menu;

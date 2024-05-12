@@ -1,7 +1,6 @@
 package com.restaurant.service;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.restaurant.dao.ClientDAO;
 import com.restaurant.dto.AuthToken;
