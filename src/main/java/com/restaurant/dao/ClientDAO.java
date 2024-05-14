@@ -59,7 +59,7 @@ public class ClientDAO {
         try {
             String name = "";
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT clients.name FROM clients WHERE clients.id = " + clientId);
+            ResultSet resultSet = statement.executeQuery("SELECT clients.email FROM clients WHERE clients.id = " + clientId);
             while (resultSet.next()) {
                 name = resultSet.getString("email");
             }
