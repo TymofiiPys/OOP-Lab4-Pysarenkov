@@ -16,12 +16,11 @@ public class PaymentService {
     private final ClientDAO clientDAO = new ClientDAO();
     private final PaymentMapper mapper = PaymentMapper.INSTANCE;
 
-    public PaymentDisplayDTO createPayment(List<PaymentCreateDTO> payment) {
-        double cost = payment.stream().map(PaymentCreateDTO::getCost).reduce(0., Double::sum);
+    public PaymentDisplayDTO createPayment(PaymentCreateDTO payment, int clientId) {
         Payment createdPayment = paymentDAO.createPayment(Payment.builder()
-                .clientId(payment.getFirst().getClientId())
+                .clientId(clientId)
                 .time(new Timestamp(new Date().getTime()))
-                .cost(cost)
+                .cost(payment.getCost())
                 .build());
         if(createdPayment == null) return null;
         return mapper.toPaymentDisplayDTO(createdPayment);

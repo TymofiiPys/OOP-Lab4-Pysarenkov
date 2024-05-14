@@ -23,11 +23,8 @@ public class PaymentController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Client client = objectMapper.readValue(
-                req.getAttribute("client").toString(),
-                Client.class
-        );
-        if(!client.isAdmin()) {
+        Client client = (Client) req.getAttribute("client");
+        if (!client.isAdmin()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
         List<PaymentDisplayDTO> payments = paymentService.getAllPayments();
@@ -42,15 +39,15 @@ public class PaymentController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<PaymentCreateDTO> payments = Arrays.asList(
+        Client client = (Client) req.getAttribute("client");
+        PaymentCreateDTO payment =
                 objectMapper.readValue(
                         req.getReader().lines().collect(Collectors.joining()),
-                        PaymentCreateDTO[].class
-                )
-        );
-        PaymentDisplayDTO createdPayment = paymentService.createPayment(payments);
+                        PaymentCreateDTO.class
+                );
+        PaymentDisplayDTO createdPayment = paymentService.createPayment(payment, client.getId());
         resp.setContentType("application/json");
-        if(createdPayment == null) {
+        if (createdPayment == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
             resp.setStatus(HttpServletResponse.SC_OK);
