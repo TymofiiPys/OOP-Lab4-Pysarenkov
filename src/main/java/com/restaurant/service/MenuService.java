@@ -17,7 +17,7 @@ public class MenuService {
 //        log.info("Parsed menu from DB");
         List<Menu> menus = menuDAO.readMenu();
         if (menus == null) return null;
-        return menuDAO.readMenu().stream().map(mapper::toMenuDTO).toList();
+        return menus.stream().map(mapper::toMenuDTO).toList();
     }
 
     public MenuDTO createMenu(MenuCreateDTO menuCreateDTO) {

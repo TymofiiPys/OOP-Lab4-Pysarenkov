@@ -26,13 +26,13 @@ public class OrderService {
 
     public List<OrderDisplayDTO> getOrdersFilteredByStatus(String statusStr) {
         Optional<Order.StatusOrder> status = checkStatus(statusStr);
-        if(status.isEmpty()) return null;
+        if (status.isEmpty()) return null;
         return toOrderDisplayDTOList(orderDAO.readOrders(status.get(), null));
     }
 
     public List<OrderDisplayDTO> getOrdersFilteredByStatusAndId(String statusStr, int clientId) {
         Optional<Order.StatusOrder> status = checkStatus(statusStr);
-        if(status.isEmpty()) return null;
+        if (status.isEmpty()) return null;
         return toOrderDisplayDTOList(orderDAO.readOrders(status.get(), clientId));
     }
 
@@ -44,13 +44,14 @@ public class OrderService {
             return Optional.empty();
         }
     }
+
     private List<OrderDisplayDTO> toOrderDisplayDTOList(List<Order> orders) {
-        if(orders == null) return null;
+        if (orders == null) return null;
         List<OrderDisplayDTO> orderDisplay = new ArrayList<>();
         for (Order order : orders) {
             Optional<Menu> orderedItem = menuDAO.getMenuItem(order.getMenuId());
             Optional<String> clientName = clientDAO.getClientEmail(order.getClientId());
-            if(orderedItem.isEmpty() || clientName.isEmpty()) {
+            if (orderedItem.isEmpty() || clientName.isEmpty()) {
                 continue;
             }
             orderDisplay.add(
@@ -67,17 +68,30 @@ public class OrderService {
         return orderDisplay;
     }
 
-    public List<OrderDTO> createOrders(List<OrderReceiveDTO> orders) {
-        List<Order> ordersMapped = orders.stream().map(mapper::fromOrderReceive).toList();
-        ordersMapped.forEach(order -> order.setStatus(Order.StatusOrder.ORDERED));
-        List<Order> createdOrders = orderDAO.createOrder(ordersMapped);
-        if(createdOrders == null) return null;
+    private List<Order> fromOrderReceiveDTO(OrderReceiveDTO orders, int clientId) {
+        List<Order> orderList = new ArrayList<>();
+        for (String menuId : orders.getMenuAmts().keySet()) {
+            orderList.add(Order.builder()
+                    .clientId(clientId)
+                    .menuId(Integer.parseInt(menuId))
+                    .amount(orders.getMenuAmts().get(menuId))
+                    .status(Order.StatusOrder.ORDERED)
+                    .build()
+            );
+        }
+        return orderList;
+    }
+
+    public List<OrderDTO> createOrders(OrderReceiveDTO orders, int clientId) {
+        List<Order> orderList = fromOrderReceiveDTO(orders, clientId);
+        List<Order> createdOrders = orderDAO.createOrder(orderList);
+        if (createdOrders == null) return null;
         return createdOrders.stream().map(mapper::toOrderDTO).toList();
     }
 
     public int updateOrderStatus(List<Integer> orderIds, String statusStr) {
         Optional<Order.StatusOrder> status = checkStatus(statusStr);
-        if(status.isEmpty()) return -1;
+        if (status.isEmpty()) return -1;
         return orderDAO.updateOrderStatus(orderIds, status.get());
     }
 }

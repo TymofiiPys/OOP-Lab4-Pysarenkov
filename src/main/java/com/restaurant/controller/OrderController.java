@@ -2,6 +2,7 @@ package com.restaurant.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restaurant.dto.OrderDTO;
 import com.restaurant.dto.OrderDisplayDTO;
 import com.restaurant.dto.OrderReceiveDTO;
 import com.restaurant.model.Client;
@@ -28,12 +29,18 @@ public class OrderController extends HttpServlet {
         if (req.getParameter("which") == null)
             orders = orderService.getAllOrders();
         else {
-            if (req.getParameter("clid") == null)
+            Client client = (Client) req.getAttribute("client");
+            if (req.getParameter("admin") != null) {
+                if (!client.isAdmin()) {
+                    resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
                 orders = orderService.getOrdersFilteredByStatus(req.getParameter("which"));
+            }
             else
                 orders = orderService.getOrdersFilteredByStatusAndId(
                         req.getParameter("which"),
-                        Integer.parseInt(req.getParameter("clid"))
+                        client.getId()
                 );
         }
         if (orders == null) {
@@ -58,19 +65,13 @@ public class OrderController extends HttpServlet {
                         }
                 )
         );
-//        List<OrderReceiveDTO> orders = Arrays.asList(
-//                objectMapper.readValue(
-//                        req.getReader().lines().collect(Collectors.joining()),
-//                        OrderReceiveDTO[].class
-//                )
-//        );
-//        List<OrderDTO> createdOrders = orderService.createOrders(orders);
-//        if (createdOrders == null) {
-//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//        } else {
-//            resp.setStatus(HttpServletResponse.SC_OK);
-//            resp.getWriter().write(objectMapper.writeValueAsString(createdOrders));
-//        }
+        List<OrderDTO> createdOrders = orderService.createOrders(orders, clientId);
+        if (createdOrders == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write(objectMapper.writeValueAsString(createdOrders));
+        }
     }
 
     @Override
@@ -82,12 +83,10 @@ public class OrderController extends HttpServlet {
                 )
         );
         if (req.getParameter("status").equals("ISSUED_FOR_PAYMENT")) {
-            Client client = objectMapper.readValue(
-                    req.getAttribute("client").toString(),
-                    Client.class
-            );
+            Client client = (Client) req.getAttribute("client");
             if (!client.isAdmin()) {
                 resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
         }
         int updatedRows = orderService.updateOrderStatus(orderIdsToIssue, req.getParameter("status"));
