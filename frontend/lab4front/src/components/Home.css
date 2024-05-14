@@ -1,0 +1,71 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.home-page {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.home-page__title {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.home-page__description {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.home-page__links {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.home-page__link {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.home-page__link.btn-primary {
+    background-color: #007bff;
+}
+
+.home-page__link.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.home-page__link.btn-secondary {
+    background-color: #28a745;
+}
+
+.home-page__link.btn-secondary:hover {
+    background-color: #218838;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background-color: #dc3545; /* Red shade */
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c82333; /* Darker red shade for hover */
+}
