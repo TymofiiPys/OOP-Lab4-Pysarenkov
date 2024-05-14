@@ -18,7 +18,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error fetching menu items:', error);
             });
-        axios.get('/api/orders?which=ISSUED_FOR_PAYMENT&clid=' + 1, {headers: config.headers})
+        axios.get('/api/orders?which=ISSUED_FOR_PAYMENT', {headers: config.headers})
             .then(response => {
                 setUnpaidOrders(response.data);
             })
@@ -55,10 +55,8 @@ function Menu() {
     }
     const handlePayment = () => {
         // Change order status to paid
-        axios.put('/api/orders?status=PAID', {
-            data: unpaidOrders.map(order => order.id),
-            headers: config.headers
-        })
+        axios.put('/api/orders?status=PAID', unpaidOrders.map(order => order.id),
+            {headers: config.headers})
             .then(response => {
                 console.log('Order updated successfully:', response.data);
             })

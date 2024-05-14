@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import getHeaderConfig from "./config/Config";
 
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
+    const config = getHeaderConfig();
 
     useEffect(() => {
         // Fetch menu items from backend servlet API
-        axios.get('/api/orders')
+        axios.get('/api/orders', {headers: config.headers})
             .then(response => {
                 setOrders(response.data);
             })
             .catch(error => {
                 console.error('Error fetching menu items:', error);
             });
-        axios.get('/api/orders?which=ORDERED')
+        axios.get('/api/orders?which=ORDERED&admin', {headers: config.headers})
             .then(response => {
                 setUnpaidOrders(response.data);
             })
@@ -24,7 +26,7 @@ function Orders() {
     }, []);
 
     const handleBillIssue = () => {
-        axios.put('/api/orders?status=ISSUED_FOR_PAYMENT', unpaidOrders.map(order => order.id))
+        axios.put('/api/orders?status=ISSUED_FOR_PAYMENT', unpaidOrders.map(order => order.id), {headers: config.headers})
             .then(response => {
                 console.log('Orders updated successfully:', response.data);
             })
