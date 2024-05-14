@@ -1,73 +1,57 @@
-import React, {useEffect, useRef, useState} from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
+// import {useNavigate} from "react-router-dom";
+import {useAuth} from "./AuthProvider";
 
 function Login() {
-    const navigate = useNavigate();
-    // const location = useLocation();
-    // const from = location.state?.from?.pathname || "/home";
-
-    const userRef = useRef();
-    const errRef = useRef();
-
-    const [email, setEmail] = useState('');
-    const [pwd, setPwd] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false)
-    const [signup, setSignup] = useState(false)
-
-    useEffect(() => {
-        userRef.current?.focus();
-    }, [])
+    // const navigate = useNavigate();
+    const [input, setInput] = useState({
+        email: "",
+        password: "",
+        signup: false
+    });
+    const [errMsg, setErrMsg] = useState("")
+    const auth = useAuth();
 
     useEffect(() => {
         setErrMsg('');
-    }, [email, pwd])
+    }, [input.email, input.password])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const url = signup === true ? "/api/auth?signup=true" : "/api/auth"
-        axios.post(url, {
-                email: email,
-                password: pwd
-            }
-        ).then(response => {
-            const token = response.data.jwt;
-            console.log(response?.data.jwt);
-            setEmail('');
-            setPwd('');
-            setSuccess(true);
-            window.localStorage.setItem('Token', response.data.jwt);
-            navigate('/home')
-        })
-            .catch(err => {
-                console.error('Error:', err); // Handle any errors
-                if (!err?.response) {
-                    setErrMsg("No Response");
-                }
-                else if (err.response?.status === 400) {
-                    setErrMsg("Missing Username or Password");
-                }
-                else if (err.response?.status === 401) {
-                    setErrMsg("Unauthorized");
-                } else {
-                    setErrMsg("Login failed");
-                }
-                errRef.current.focus();
-            });
+        console.log(JSON.stringify(input));
+        let err = auth.loginAction(input);
+        if (!err?.response) {
+            setErrMsg("No Response");
+        } else if (err.response?.status === 400) {
+            setErrMsg("Missing Username or Password");
+        } else if (err.response?.status === 401) {
+            setErrMsg("Unauthorized");
+        } else {
+            setErrMsg("Login failed");
+        }
     }
 
+    const handleInput = (e) => {
+        const {name, value} = e.target;
+        setInput((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
     return (
         <div>
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+            <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
             <h1>Sign in</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="email">Email:</label>
-                <input type="text" id="email" autoComplete="off" onChange={(e) => setEmail(e.target.value)} value={email} required />
+                <input type="text" id="email" name="email" autoComplete="off" onChange={handleInput}
+                       value={input.email} required/>
                 <label htmlFor="password">Password:</label>
-                <input type="password" id="password" onChange={(e) => setPwd(e.target.value)} value={pwd} required />
+                <input type="password" id="password" name="password" onChange={handleInput}
+                       value={input.password} required/>
                 <label>Sign Up</label>
-                <input type="checkbox" onChange={(e) => setSignup(e.target.checked)} checked={signup}/>
+                <input type="checkbox" name="signup" onChange={handleInput}
+                       checked={input.signup}/>
                 <button>Sign in</button>
             </form>
         </div>
