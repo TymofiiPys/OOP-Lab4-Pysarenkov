@@ -16,7 +16,7 @@ public class PaymentService {
     private final ClientDAO clientDAO = new ClientDAO();
     private final PaymentMapper mapper = PaymentMapper.INSTANCE;
 
-    public PaymentCreateDTO createPayment(List<PaymentCreateDTO> payment) {
+    public PaymentDisplayDTO createPayment(List<PaymentCreateDTO> payment) {
         double cost = payment.stream().map(PaymentCreateDTO::getCost).reduce(0., Double::sum);
         Payment createdPayment = paymentDAO.createPayment(Payment.builder()
                 .clientId(payment.getFirst().getClientId())
@@ -24,7 +24,7 @@ public class PaymentService {
                 .cost(cost)
                 .build());
         if(createdPayment == null) return null;
-        return mapper.toPaymentDTO(createdPayment);
+        return mapper.toPaymentDisplayDTO(createdPayment);
     }
 
     public List<PaymentDisplayDTO> getAllPayments() {

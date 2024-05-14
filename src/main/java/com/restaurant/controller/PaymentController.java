@@ -48,8 +48,7 @@ public class PaymentController extends HttpServlet {
                         PaymentCreateDTO[].class
                 )
         );
-        // TODO: should be PaymentDisplayDTO
-        PaymentCreateDTO createdPayment = paymentService.createPayment(payments);
+        PaymentDisplayDTO createdPayment = paymentService.createPayment(payments);
         resp.setContentType("application/json");
         if(createdPayment == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
