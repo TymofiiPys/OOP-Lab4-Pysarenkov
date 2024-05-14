@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import config from "./config/Config";
 import getHeaderConfig from "./config/Config";
+import "./Menu.css"
 
 function Menu() {
 
@@ -25,7 +26,7 @@ function Menu() {
             .catch(error => {
                 console.error('Error fetching unpaid orders:', error);
             });
-    }, []);
+    }, [unpaidOrders]);
 
     const handleSubmitOrder = (orderData) => {
         axios.post('/api/orders', orderData, {headers: config.headers})
@@ -51,9 +52,8 @@ function Menu() {
         handleSubmitOrder(order);
     }
 
-    {/* Called when client pays for orders */
-    }
-    const handlePayment = () => {
+    const handlePayment = (e) => {
+        e.preventDefault();
         // Change order status to paid
         axios.put('/api/orders?status=PAID', unpaidOrders.map(order => order.id),
             {headers: config.headers})
@@ -64,23 +64,24 @@ function Menu() {
                 console.error('Error placing order:', error);
             });
         // Create payment
-        axios.post('/api/payment', {clientId: 1, cost: totalUnpaidCost})
+        axios.post('/api/payment', {cost: totalUnpaidCost}, {headers: config.headers})
             .then(response => {
                 console.log('Payment created successfully:', response.data);
             })
             .catch(error => {
                 console.error('Error placing order:', error);
             });
+        setUnpaidOrders([]);
     }
 
-    const totalUnpaidCost = unpaidOrders.reduce((total, order) => {
+    const totalUnpaidCost = unpaidOrders?.reduce((total, order) => {
         return total + order.cost;
     }, 0);
 
-    return (<div>
+    return (<div className="order-form-container">
             <h2>Order Form</h2>
-            <form onSubmit={handleSubmit}>
-                <table>
+            <form onSubmit={handleSubmit} className="order-form">
+                <table className="order-table">
                     <thead>
                     <tr>
                         <th>Menu Item</th>
@@ -101,18 +102,19 @@ function Menu() {
                                     value={order[item.id] || 0}
                                     onChange={(e) => handleAmountChange(item.id, parseInt(e.target.value))}
                                     min={0}
+                                    className="amount-input"
                                 />
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
-                <button type="submit">Place Order</button>
+                <button type="submit" className="btn btn-primary">Place Order</button>
             </form>
-            <form onSubmit={handlePayment}>
+            <form onSubmit={handlePayment} className="payment-form">
                 <div>
                     <h2>Unpaid Orders</h2>
-                    <table>
+                    <table className="order-table">
                         <thead>
                         <tr>
                             <th>Menu Item</th>
@@ -131,7 +133,7 @@ function Menu() {
                         </tbody>
                     </table>
                     <h1>Total: ${totalUnpaidCost.toFixed(2)}</h1>
-                    <button type="submit">Pay</button>
+                    <button type="submit" className="btn btn-success">Pay</button>
                 </div>
             </form>
         </div>

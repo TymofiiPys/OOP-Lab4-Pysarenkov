@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import getHeaderConfig from "./config/Config";
+import {Link} from "react-router-dom";
 
 function Orders() {
     const [orders, setOrders] = useState([]);
@@ -35,7 +36,11 @@ function Orders() {
             });
     }
 
-    return (<div>
+    return (
+        <div>
+            <div>
+                <h2>Menu settings</h2>
+            </div>
         <h2>Orders List</h2>
         <table>
             <thead>

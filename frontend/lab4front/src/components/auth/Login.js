@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 // import {useNavigate} from "react-router-dom";
 import {useAuth} from "./AuthProvider";
+import "./Login.css"
 
 function Login() {
     // const navigate = useNavigate();
@@ -39,20 +40,27 @@ function Login() {
         }));
     };
     return (
-        <div>
+        <div className="login-container">
             <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Sign in</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email:</label>
-                <input type="text" id="email" name="email" autoComplete="off" onChange={handleInput}
-                       value={input.email} required/>
-                <label htmlFor="password">Password:</label>
-                <input type="password" id="password" name="password" onChange={handleInput}
-                       value={input.password} required/>
-                <label>Sign Up</label>
-                <input type="checkbox" name="signup" onChange={handleInput}
-                       checked={input.signup}/>
-                <button>Sign in</button>
+            <h1 className="login-header">Sign in</h1>
+            <form onSubmit={handleSubmit} className="login-form">
+                <div className="form-group">
+                    <label htmlFor="email">Email:</label>
+                    <input type="text" id="email" name="email" autoComplete="off" onChange={handleInput}
+                           value={input.email} required className="form-control"/>
+                </div>
+                <div>
+                    <label htmlFor="password">Password:</label>
+                    <input type="password" id="password" name="password" onChange={handleInput}
+                           value={input.password} required className="form-control"/>
+                </div>
+                <div className="form-group form-check">
+                    <label htmlFor="signup" className="form-check-label">Sign Up</label>
+                    <input type="checkbox" name="signup" onChange={handleInput}
+                           checked={input.signup} className="form-check-input"/>
+                    <br/>
+                </div>
+                <button type="submit" className="btn btn-primary">Sign in</button>
             </form>
         </div>
     )
