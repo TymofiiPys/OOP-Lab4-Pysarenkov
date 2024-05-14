@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './Modal.css';
 import axios from "axios";
+import getHeaderConfig from "../config/Config";
 
-const UpdateMenu = ({ closeModal }) => {
-    const [menuItem, setMenuItem] = useState({ id: '', name: '', mealOrDrink: false, cost: '' });
-
+const UpdateMenu = ({closeModal}) => {
+    const [menuItem, setMenuItem] = useState({id: '', name: '', mealOrDrink: false, cost: ''});
+    const config = getHeaderConfig();
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        if(name === "id") {
+        const {name, value, type, checked} = e.target;
+        if (name === "id") {
             axios.get('/api/menu/' + value, {headers: config.headers})
                 .then(response => {
                     setMenuItem(response.data);
@@ -42,19 +43,20 @@ const UpdateMenu = ({ closeModal }) => {
                 <form onSubmit={handleSubmit}>
                     <label>
                         ID:
-                        <input type="text" name="id" value={menuItem.id} onChange={handleChange} required />
+                        <input type="text" name="id" value={menuItem.id} onChange={handleChange} required/>
                     </label>
                     <label>
                         Food Name:
-                        <input type="text" name="name" value={menuItem.name} onChange={handleChange} required />
+                        <input type="text" name="name" value={menuItem.name} onChange={handleChange} required/>
                     </label>
                     <label>
                         Meal or Drink:
-                        <input type="checkbox" name="mealOrDrink" checked={menuItem.mealOrDrink} onChange={handleChange} />
+                        <input type="checkbox" name="mealOrDrink" checked={menuItem.mealOrDrink}
+                               onChange={handleChange}/>
                     </label>
                     <label>
                         Cost:
-                        <input type="number" name="cost" value={menuItem.cost} onChange={handleChange} required />
+                        <input type="number" name="cost" value={menuItem.cost} onChange={handleChange} required/>
                     </label>
                     <button type="submit">Submit</button>
                     <button type="button" onClick={closeModal}>Close</button>

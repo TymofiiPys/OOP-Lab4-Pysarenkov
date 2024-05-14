@@ -1,11 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import getHeaderConfig from "./config/Config";
-import {Link} from "react-router-dom";
+import "./Orders.css"
+import AddMenu from "./menuedit/AddMenu";
+import DeleteMenu from "./menuedit/DeleteMenu";
+import UpdateMenu from "./menuedit/UpdateMenu";
 
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
+    const [activeModal, setActiveModal] = useState(null);
+
     const config = getHeaderConfig();
 
     useEffect(() => {
@@ -36,60 +41,72 @@ function Orders() {
             });
     }
 
+    const closeModal = () => {
+        setActiveModal(null);
+    };
+
+
     return (
-        <div>
-            <div>
-                <h2>Menu settings</h2>
+        <div className="admin-page">
+            {activeModal === 'add' && <AddMenu closeModal={closeModal}/>}
+            {activeModal === 'delete' && <DeleteMenu closeModal={closeModal}/>}
+            {activeModal === 'update' && <UpdateMenu closeModal={closeModal}/>}
+            <h2>Menu settings</h2>
+            <div className="menu-settings">
+                <button onClick={() => setActiveModal('add')} className="btn btn-primary">Add Menu</button>
+                <button onClick={() => setActiveModal('delete')} className="btn btn-secondary">Delete Menu</button>
+                <button onClick={() => setActiveModal('update')} className="btn btn-success">Update Menu</button>
             </div>
-        <h2>Orders List</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Client Name</th>
-                <th>Menu Item</th>
-                <th>Amount</th>
-                <th>Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            {orders.map(order => (
-                <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.clientName}</td>
-                    <td>{order.menuItemName}</td>
-                    <td>{order.amount}</td>
-                    <td>{order.status}</td>
-                    <td>${order.cost.toFixed(2)}</td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-        <div>
-            <h2>Unpaid Orders</h2>
-            <table>
+            <h2>Orders List</h2>
+            <table className="order-table">
                 <thead>
                 <tr>
-                    <th>Client</th>
+                    <th>Order ID</th>
+                    <th>Client Name</th>
                     <th>Menu Item</th>
                     <th>Amount</th>
+                    <th>Status</th>
                     <th>Cost</th>
                 </tr>
                 </thead>
                 <tbody>
-                {unpaidOrders.map(order => (
+                {orders.map(order => (
                     <tr key={order.id}>
+                        <td>{order.id}</td>
                         <td>{order.clientName}</td>
                         <td>{order.menuItemName}</td>
                         <td>{order.amount}</td>
+                        <td>{order.status}</td>
                         <td>${order.cost.toFixed(2)}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-            <button onClick={handleBillIssue}>Send bills</button>
-        </div>
-    </div>);
+            <div>
+                <h2>Unpaid Orders</h2>
+                <table className="order-table">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Menu Item</th>
+                        <th>Amount</th>
+                        <th>Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {unpaidOrders.map(order => (
+                        <tr key={order.id}>
+                            <td>{order.clientName}</td>
+                            <td>{order.menuItemName}</td>
+                            <td>{order.amount}</td>
+                            <td>${order.cost.toFixed(2)}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+                <button onClick={handleBillIssue} className="btn btn-warning">Send bills</button>
+            </div>
+        </div>);
 }
 
 export default Orders;

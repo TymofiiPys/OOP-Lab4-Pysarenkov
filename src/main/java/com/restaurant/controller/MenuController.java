@@ -20,6 +20,7 @@ public class MenuController extends HttpServlet {
     private final MenuService menuService = new MenuService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    // TODO: Add fetching a single menu item
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         List<MenuDTO> menu = menuService.getMenu();
@@ -86,6 +87,7 @@ public class MenuController extends HttpServlet {
         if(!client.isAdmin()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
+        //TODO: parse menuId from parameter
         int menuIdToDelete = objectMapper.readValue(
                 req.getReader().lines().collect(Collectors.joining()),
                 Integer.class
