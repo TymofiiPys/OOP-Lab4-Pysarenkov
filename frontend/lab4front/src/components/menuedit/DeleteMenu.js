@@ -20,8 +20,8 @@ const DeleteMenu = ({ closeModal }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { name, value } = e.target;
-        axios.delete('/api/menu' + value, {headers: config.headers})
+        // const { name, value } = e.target;
+        axios.delete('/api/menu/' + menuItem.id, {headers: config.headers})
             .then(() => {
                 console.log('Menu deleted successfully');
             })
