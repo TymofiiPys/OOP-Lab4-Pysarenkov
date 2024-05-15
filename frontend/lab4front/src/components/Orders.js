@@ -8,6 +8,7 @@ import UpdateMenu from "./menuedit/UpdateMenu";
 
 function Orders() {
     const [orders, setOrders] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [unpaidOrders, setUnpaidOrders] = useState([]);
     const [activeModal, setActiveModal] = useState(null);
 
@@ -17,17 +18,29 @@ function Orders() {
         // Fetch menu items from backend servlet API
         axios.get('/api/orders', {headers: config.headers})
             .then(response => {
+                console.log("Parsed orders");
                 setOrders(response.data);
             })
             .catch(error => {
-                console.error('Error fetching menu items:', error);
+                console.error('Error fetching orders:', error);
             });
         axios.get('/api/orders?which=ORDERED&admin', {headers: config.headers})
             .then(response => {
+                console.log("Parsed UNPAID orders");
                 setUnpaidOrders(response.data);
             })
             .catch(error => {
-                console.error('Error fetching menu items:', error);
+                console.error('Error fetching UNPAID orders:', error);
+            });
+        axios.get('/api/payment', {headers: config.headers})
+            .then(
+                response => {
+                    console.log("Parsed payments");
+                    setPayments(response.data);
+                }
+            )
+            .catch(error => {
+                console.error('Error fetching payments:', error);
             });
     }, []);
 
@@ -57,6 +70,30 @@ function Orders() {
                 <button onClick={() => setActiveModal('delete')} className="btn btn-secondary">Delete Menu</button>
                 <button onClick={() => setActiveModal('update')} className="btn btn-success">Update Menu</button>
             </div>
+            <div>
+                <h2>Unpaid Orders</h2>
+                <table className="order-table">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Menu Item</th>
+                        <th>Amount</th>
+                        <th>Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {unpaidOrders.map(order => (
+                        <tr key={order.id}>
+                            <td>{order.clientName}</td>
+                            <td>{order.menuItemName}</td>
+                            <td>{order.amount}</td>
+                            <td>${order.cost.toFixed(2)}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+                <button onClick={handleBillIssue} className="btn btn-warning">Send bills</button>
+            </div>
             <h2>Orders List</h2>
             <table className="order-table">
                 <thead>
@@ -82,30 +119,27 @@ function Orders() {
                 ))}
                 </tbody>
             </table>
-            <div>
-                <h2>Unpaid Orders</h2>
-                <table className="order-table">
-                    <thead>
+            <h2>Payments List</h2>
+            <table className="order-table">
+                <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Client Name</th>
+                    <th>Time of transaction</th>
+                    <th>Cost</th>
+                </tr>
+                </thead>
+                <tbody>
+                {payments.map(payment => (
                     <tr>
-                        <th>Client</th>
-                        <th>Menu Item</th>
-                        <th>Amount</th>
-                        <th>Cost</th>
+                        <td>{payment.clientId}</td>
+                        <td>{payment.clientName}</td>
+                        <td>{payment.timeStr}</td>
+                        <td>${payment.cost.toFixed(2)}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {unpaidOrders.map(order => (
-                        <tr key={order.id}>
-                            <td>{order.clientName}</td>
-                            <td>{order.menuItemName}</td>
-                            <td>{order.amount}</td>
-                            <td>${order.cost.toFixed(2)}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-                <button onClick={handleBillIssue} className="btn btn-warning">Send bills</button>
-            </div>
+                ))}
+                </tbody>
+            </table>
         </div>);
 }
 

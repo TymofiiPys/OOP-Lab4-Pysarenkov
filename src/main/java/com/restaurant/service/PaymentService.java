@@ -23,7 +23,9 @@ public class PaymentService {
                 .cost(payment.getCost())
                 .build());
         if(createdPayment == null) return null;
-        return mapper.toPaymentDisplayDTO(createdPayment);
+        PaymentDisplayDTO ret = mapper.toPaymentDisplayDTO(createdPayment);
+        ret.setTimeStr(ret.getTime().toString());
+        return ret;
     }
 
     public List<PaymentDisplayDTO> getAllPayments() {
@@ -31,6 +33,7 @@ public class PaymentService {
         List<PaymentDisplayDTO> paymentsToDisplay = payments.stream().map(mapper::toPaymentDisplayDTO).toList();
         for (var payment : paymentsToDisplay) {
             payment.setClientName(clientDAO.getClientEmail(payment.getClientId()).orElse(""));
+            payment.setTimeStr(payment.getTime().toString());
         }
         return paymentsToDisplay;
     }
