@@ -4,6 +4,7 @@ import com.restaurant.db.RestaurantDBConnection;
 import com.restaurant.model.Menu;
 import lombok.extern.log4j.Log4j2;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,8 @@ public class MenuDAO {
                     Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, menu.getName());
             statement.setBoolean(2, menu.isMealOrDrink());
-            statement.setDouble(3, menu.getCost());
+//            statement.setDouble(3, menu.getCost());
+            statement.setBigDecimal(3, BigDecimal.valueOf(menu.getCost()));
             statement.executeUpdate();
             ResultSet idRS = statement.getGeneratedKeys();
             idRS.next();
@@ -106,7 +108,7 @@ public class MenuDAO {
             PreparedStatement statement = connection.prepareStatement("UPDATE menu SET name = ?, meal = ?, cost = ? WHERE id = ?");
             statement.setString(1, menu.getName());
             statement.setBoolean(2, menu.isMealOrDrink());
-            statement.setDouble(3, menu.getCost());
+            statement.setBigDecimal(3, BigDecimal.valueOf(menu.getCost()));
             statement.setInt(4, menu.getId());
             return statement.executeUpdate();
         } catch (SQLException e) {
