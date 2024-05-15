@@ -37,11 +37,16 @@ public class MenuDAO {
         return menu;
     }
 
-    public List<Menu> readMenu() {
+    public List<Menu> readMenu(Integer id) {
         List<Menu> menus = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM menu";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            StringBuilder sql = new StringBuilder("SELECT * FROM menu");
+            if (id != null) {
+                sql
+                        .append(" WHERE menu.id = ")
+                        .append(id);
+            }
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Menu menu = Menu.builder().build();

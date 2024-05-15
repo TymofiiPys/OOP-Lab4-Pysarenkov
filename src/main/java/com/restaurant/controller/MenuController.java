@@ -15,14 +15,36 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@WebServlet(name = "MenuServlet", value = "/menu")
+@WebServlet(name = "MenuServlet", value = "/menu/*")
 public class MenuController extends HttpServlet {
     private final MenuService menuService = new MenuService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // TODO: Add fetching a single menu item
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String uri = req.getRequestURI();
+        if(!uri.equals("/lab4/menu")){
+            String idStr = uri.substring(uri.lastIndexOf('/') + 1);
+            int id;
+            try {
+                id = Integer.parseInt(idStr);
+            } catch (NumberFormatException e) {
+                // Handle the case where the ID is not a valid integer
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            List<MenuDTO> menuDTO = menuService.getMenu(id);
+            if (menuDTO == null)
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            else if (menuDTO.isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            else {
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.getWriter().write(objectMapper.writeValueAsString(menuDTO.getFirst()));
+            }
+            return;
+        }
         List<MenuDTO> menu = menuService.getMenu();
         resp.setContentType("application/json");
         if (menu == null)
@@ -35,10 +57,7 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Client client = objectMapper.readValue(
-                req.getAttribute("client").toString(),
-                Client.class
-        );
+        Client client = (Client) req.getAttribute("client");
         if(!client.isAdmin()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
@@ -57,10 +76,7 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Client client = objectMapper.readValue(
-                req.getAttribute("client").toString(),
-                Client.class
-        );
+        Client client = (Client) req.getAttribute("client");
         if(!client.isAdmin()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
@@ -80,18 +96,18 @@ public class MenuController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Client client = objectMapper.readValue(
-                req.getAttribute("client").toString(),
-                Client.class
-        );
+        Client client = (Client) req.getAttribute("client");
         if(!client.isAdmin()) {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
-        //TODO: parse menuId from parameter
-        int menuIdToDelete = objectMapper.readValue(
-                req.getReader().lines().collect(Collectors.joining()),
-                Integer.class
-        );
+        String idStr = req.getRequestURI().substring(req.getRequestURI().lastIndexOf('/') + 1);
+        int menuIdToDelete;
+        try {
+            menuIdToDelete = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         int deletedRows = menuService.deleteMenu(menuIdToDelete);
         if (deletedRows < 0) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);

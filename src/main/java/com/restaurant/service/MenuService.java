@@ -15,7 +15,13 @@ public class MenuService {
 
     public List<MenuDTO> getMenu() {
 //        log.info("Parsed menu from DB");
-        List<Menu> menus = menuDAO.readMenu();
+        List<Menu> menus = menuDAO.readMenu(null);
+        if (menus == null) return null;
+        return menus.stream().map(mapper::toMenuDTO).toList();
+    }
+
+    public List<MenuDTO> getMenu(int id) {
+        List<Menu> menus = menuDAO.readMenu(id);
         if (menus == null) return null;
         return menus.stream().map(mapper::toMenuDTO).toList();
     }
